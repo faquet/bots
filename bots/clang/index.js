@@ -1,4 +1,5 @@
 'use strict';
+
 let Bot = require('slackbots');
 
 module.exports = () => {
@@ -12,7 +13,6 @@ module.exports = () => {
     let params = {
         icon_emoji: ':nail_care:'
     };
-
-    clang.postMessageToChannel('general', 'Clanging and banging.', params);
+    // clang.postMessageToChannel('general', 'Clanging and banging.', params);
   });
 }();
