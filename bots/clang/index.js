@@ -11,7 +11,7 @@ module.exports = () => {
 
   clang.on('start', () => {
     let params = {
-        icon_emoji: ':nail_care:'
+        icon_emoji: ':neutral_face:'
     };
     // clang.postMessageToChannel('general', 'Clanging and banging.', params);
   });
