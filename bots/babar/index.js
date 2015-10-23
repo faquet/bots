@@ -12,10 +12,10 @@ module.exports = () => {
 
   babar.params = {
     icon_url: 'http://i.imgur.com/p51tcBd.jpg?1',
-  }
+  };
 
   babar.on('start', () => {
-    console.log('starting')
+    console.log('starting');
   });
   
   babar.on('message', (data) => {
@@ -27,7 +27,7 @@ module.exports = () => {
     if (data.type === 'message' && data.username !== 'babar' && data.text === 'Babar, what are you doing tomorrow?') {
       babar.postMessageToChannel('general', 'Well, I\'m going to polka dancing with Charlene, my sex-ambiguous escort, and then later I\'m eating a family-sized bag of Combos and watching Maury', babar.params);
     }
-  })
+  });
 
 
 
