@@ -2,7 +2,8 @@
 'use strict';
 
 let _ = require('underscore'),
-Bot = require('slackbots');
+    Message = require('./message.js'),
+    Bot = require('slackbots');
 
 module.exports = () => {
 
@@ -22,48 +23,10 @@ module.exports = () => {
   babar.on('message', (data) => {
     console.log('data: ', data);
     if (data.username === 'babar') {return;}
-    if (data.type === 'message') {
-      initResponses(data.text);
+    if (data.type === 'message' && Message.findResponse(data.text)) {
+      babar.postMessageToChannel('general', Message.response, babar.params);
     }
   });
-
-  let initResponses = (dataText) => {
-    hello(dataText);
-    water(dataText);
-    tomorrow(dataText);
-  };
-
-  let parseText = (text, key) => {
-    return _.contains(text.split(' '), key);
-  };
-
-  let response = (responseText) => {
-    babar.postMessageToChannel('general', responseText, babar.params);
-  };
-
-  let hello = (text) => {
-    console.log('text: ', text);
-    console.log('parsettext: ', parseText(text, 'Babar'));
-    if (parseText(text, 'Babar')) {
-      response('WHAT WHAT IS IT LEAVE ME ALONE');
-    }
-  };
-
-  let water = (text) => {
-    if (parseText(text, 'water')) {
-      response('Babar only drinks the blood of enemies');
-    }
-  };
-
-  let tomorrow = (text) => {
-    if (parseText(text, 'tomorrow')) {
-      response('Well, I\'m going to polka dancing with Charlene, my sex-ambiguous escort, and then later I\'m eating a family-sized bag of Combos and watching Maury');
-    }
-  };
-
-
-
-
 
 
 
