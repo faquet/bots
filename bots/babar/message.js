@@ -12,7 +12,6 @@
     },
 
     parseText: (text, key) => {
-      // console.log('parsetex text: ', text);
       return text.toLowerCase().indexOf(key.toLowerCase()) >= 0;
     },
 
@@ -35,8 +34,6 @@
     },
 
     kwak: (text) => {
-            console.log('text: ', text);
-      console.log('parsettext: ', Message.parseText(text, 'Babar wants a cracker?'));
       if (Message.parseText(text, 'Babar wants a cracker?')) {
         Message.response = 'Kwak kwak kwak kwak kwak';
       }

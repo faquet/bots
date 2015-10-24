@@ -17,11 +17,10 @@ module.exports = () => {
   };
 
   babar.on('start', () => {
-    console.log('starting');
+    console.log('Babar can\'t feel his legs');
   });
   
   babar.on('message', (data) => {
-    console.log('data: ', data);
     if (data.username === 'babar') {return;}
     if (data.type === 'message' && Message.findResponse(data.text)) {
       babar.postMessageToChannel('general', Message.response, babar.params);
