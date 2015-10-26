@@ -24,11 +24,11 @@ module.exports = () => {
   babar.on('message', (data) => {
     if (data.username === 'babar') {return;}
     if (data.type === 'message' && Message.findResponse(data.text)) {
-      babar.postMessageToChannel('test', Message.response, babar.params);
+      babar.postMessageToChannel('general', Message.response, babar.params);
     }
     if (data.type === 'message' && Message.imageMe(data.text)) {
       Message.findImage(data.text, (link) => {
-        babar.postMessageToChannel('test', link, babar.params);
+        babar.postMessageToChannel('general', link, babar.params);
       });
     }
 
