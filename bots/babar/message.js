@@ -1,5 +1,5 @@
  'use strict';
- let Image = require('./image-search.js');
+ let ImageMe = require('./image-me.js');
  
 
  let Message = {
@@ -23,9 +23,7 @@
 
     findImage: (text, cb) => {
         let searchCriteria = text.match(/(image me)? (.*)/i).pop();
-        console.log('message,', searchCriteria);
-        Image.search(searchCriteria, (link) => {
-          console.log('hell!', link);
+        ImageMe.search(searchCriteria, (link) => {
           cb(link);
         });
     },
@@ -69,7 +67,6 @@
         Message.response = "WELCOME LIVE TO WWWWE RAW 3000 LET'S GET SOME OKEEEE I AM THE COMING MESSIAH OF SUMOPLEXES GONNA LIBERATE YOUR SOULS, I WEAR THE FOOD CHAIN AS A BELT, MOUNTAINS QUIVER AND BOW DOWN BEFORE ME, THE THREE LITTLE PIGS AINT GOT NUTHIN ON ME.";
       }
     },
-
 
 
   };
