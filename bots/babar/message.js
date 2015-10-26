@@ -1,5 +1,8 @@
+ 'use strict';
+ let Image = require('./image-search.js');
  
- Message = {
+
+ let Message = {
 
     findResponse: (dataText) => {
       Message.response = null;
@@ -8,7 +11,23 @@
       Message.tomorrow(dataText);
       Message.kwak(dataText);
       Message.test(dataText);
+      Message.wwe(dataText);
       return Message.response;
+    },
+
+    imageMe: (dataText) => {
+      if (Message.parseText(dataText, 'image me')) {
+        return true;
+      }
+    },
+
+    findImage: (text, cb) => {
+        let searchCriteria = text.match(/(image me)? (.*)/i).pop();
+        console.log('message,', searchCriteria);
+        Image.search(searchCriteria, (link) => {
+          console.log('hell!', link);
+          cb(link);
+        });
     },
 
     parseText: (text, key) => {
@@ -43,7 +62,15 @@
       if (Message.parseText(text, 'test')) {
         Message.response = 'test deez nuts';
       }
-    }
+    },
+
+    wwe: (text) => {
+      if (Message.parseText(text, 'wwe')) {
+        Message.response = "WELCOME LIVE TO WWWWE RAW 3000 LET'S GET SOME OKEEEE I AM THE COMING MESSIAH OF SUMOPLEXES GONNA LIBERATE YOUR SOULS, I WEAR THE FOOD CHAIN AS A BELT, MOUNTAINS QUIVER AND BOW DOWN BEFORE ME, THE THREE LITTLE PIGS AINT GOT NUTHIN ON ME.";
+      }
+    },
+
+
 
   };
 

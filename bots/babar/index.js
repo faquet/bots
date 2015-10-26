@@ -12,6 +12,7 @@ module.exports = () => {
     name: 'babar',
   });
 
+
   babar.params = {
     icon_url: 'http://i.imgur.com/p51tcBd.jpg?1',
   };
@@ -19,12 +20,18 @@ module.exports = () => {
   babar.on('start', () => {
     console.log('Babar can\'t feel his legs');
   });
-  
+
   babar.on('message', (data) => {
     if (data.username === 'babar') {return;}
     if (data.type === 'message' && Message.findResponse(data.text)) {
-      babar.postMessageToChannel('general', Message.response, babar.params);
+      babar.postMessageToChannel('test', Message.response, babar.params);
     }
+    if (data.type === 'message' && Message.imageMe(data.text)) {
+      Message.findImage(data.text, (link) => {
+        babar.postMessageToChannel('test', link, babar.params);
+      });
+    }
+
   });
 
 
