@@ -1,61 +1,50 @@
 'use strict';
-const _ = require('underscore');
-const api = require('./api');
-const token = require('./credentials').token;
-const attributes = require('../manifest.json');
-const postMessage = require('./message').postMessage;
-const Socket = require('ws');
+const util = require('util');
+const extend = require('extend');
 const EventEmitter = require('events').EventEmitter;
-const cron = require('./cron');
+const Socket = require('ws');
+const api = require('./api');
+const store = require('./store');
 
 let team = {};
 
-module.exports = () => {
+function Clang(params) {
+  this.token = params.token;
+  this.name = params.name;
+  this.start = start;
+  this.connect = connect;
 
-  const Clang = {};
-
-  Clang.token = token
-  Clang.name = attributes.name;
-  _.extend(Clang, EventEmitter);
-
-  Clang.init = () => {
-    let params = {token};
-    api('rtm.start', params)
-      .then((data) => {
-        Clang.emit('start');
-        connect(data.url);
-      });
-  };
-
-  Clang.captureData = (data) => {
-    team.socketUrl = data.url;
-    team.channels = data.channels;
-    team.users = data.users;
-    team.ims = data.ims;
-    team.groups = data.groups;
-    team.bots = data.bots;
-    return team;
-  };
-
-  Clang.connect = (url) => {
-    let socket = new Socket(url);
-
-    socket.on('open', (data) => {
-      Clang.emit('open', data);
-    });
-
-    socket.on('close', (data) => {
-      Clang.emit('close', data);
-    });
-
-    socket.on('message', (data) => {
-      try {
-        Clang.emit('message', JSON.parse(data));
-      } catch (e) {
-        console.log(e);
-      }
-    });
-  };
-
-  return Clang;
+  this.start();
 };
+
+util.inherits(Clang, EventEmitter);
+
+const start = function() {
+  let params = {token: this.token};
+  api('rtm.start', params).then((data) => {
+    this.emit('start');
+    this.connect(data.url);
+  });
+};
+
+const connect = function(url) {
+  let socket = new Socket(url);
+
+  socket.on('open', (data) => {
+    this.emit('open', data);
+  });
+
+  socket.on('close', (data) => {
+    this.emit('close', data);
+  });
+
+  socket.on('message', (data) => {
+    try {
+      this.emit('message', JSON.parse(data));
+    } catch (e) {
+      console.log(e);
+    }
+  });
+};
+
+module.exports = Clang;
