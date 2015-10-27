@@ -1,9 +1,9 @@
 'use strict';
-let gulp = require('gulp');
-let gutil = require('gulp-util');
-let $ = require('gulp-load-plugins')();
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const $ = require('gulp-load-plugins')();
 
-let paths = {
+const paths = {
   eslint: {
     src: [
       '*.js',
@@ -12,13 +12,14 @@ let paths = {
   }
 };
 
-let opts = {
+const opts = {
   notify: {
-    eslint: function(file) {
+    eslint: (file) => {
       if (file.eslint.errorCount === 0) {
         return false;
       }
-      let errors = file.eslint.messages.map(function(data) {
+
+      let errors = file.eslint.messages.map((data) => {
         return '(' + data.line + ':' + data.column + ') ' + data.message;
       }).join('\n');
 

@@ -1,11 +1,16 @@
 'use strict';
-let gulp = require('gulp');
-let gutil = require('gulp-util');
-let $ = require('gulp-load-plugins')();
-let paths = require('./tools/gulp.config').paths;
-let opts = require('./tools/gulp.config').opts;
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const $ = require('gulp-load-plugins')();
+const paths = require('./tools/gulp.config').paths;
+const opts = require('./tools/gulp.config').opts;
+const shell = require('gulp-shell');
 
 gulp.task('default', ['eslint:watch']);
+
+gulp.task('watch', ['nodemon', 'eslint:watch']);
+
+gulp.task('nodemon', shell.task('nodemon server.js'));
 
 gulp.task('eslint:watch', () => {
   gulp.watch(paths.eslint.src, ['eslint']);

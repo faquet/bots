@@ -1,6 +1,6 @@
 'use strict';
-let express = require('express');
-let app = express();
+const express = require('express');
+const app = express();
 
 require('./bots/clang');
 require('./bots/babar');
