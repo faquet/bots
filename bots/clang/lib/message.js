@@ -7,11 +7,10 @@ const postMessage = (text) => {
   params.token = cred.token;
   params.channel = cred.roughhouse;
   params.text = text;
-  console.log(params);
   api('chat.postMessage', params)
     .then((data) => {
       console.log(data);
-    })
+    });
 };
 
 module.exports.postMessage = postMessage;

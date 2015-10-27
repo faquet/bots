@@ -13,6 +13,7 @@ let team = {};
 module.exports = () => {
 
   const Clang = {};
+
   Clang.token = token
   Clang.name = attributes.name;
   _.extend(Clang, EventEmitter);
@@ -23,7 +24,6 @@ module.exports = () => {
       .then((data) => {
         Clang.emit('start');
         connect(data.url);
-        console.log('Clang is logged in.');
       });
   };
 
@@ -57,5 +57,5 @@ module.exports = () => {
     });
   };
 
-return Clang;
+  return Clang;
 };
