@@ -4,15 +4,14 @@ const extend = require('extend');
 const EventEmitter = require('events').EventEmitter;
 const Socket = require('ws');
 const api = require('./api');
-const store = require('./store');
-
-let team = {};
+const postMessage = require('./message');
 
 function Clang(params) {
   this.token = params.token;
   this.name = params.name;
   this.start = start;
   this.connect = connect;
+  this.postMessage = postMessage;
 
   this.start();
 };
@@ -41,8 +40,8 @@ const connect = function(url) {
   socket.on('message', (data) => {
     try {
       this.emit('message', JSON.parse(data));
-    } catch (e) {
-      console.log(e);
+    } catch (err) {
+      console.log(err);
     }
   });
 };
