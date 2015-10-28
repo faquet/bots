@@ -2,23 +2,21 @@
 
 let request = require('request'),
     _ = require('underscore'),
+    store = require('../../lib/store'),
     qs = require('querystring');
 
 let ImageMe = {
 
   search: (text, send_message) => {
 
-    let googleCseId = process.env.BOT_GOOGLE_IMAGE_SEARCH_ID,
-    googleApiKey = process.env.BOT_GOOGLE_IMAGE_SEARCH_SERVER_KEY;
-
-    if (googleCseId && googleApiKey) {
+    if (store.googleCseId && store.googleApiKey) {
       let q = {
         q: text,
         searchType:'image',
         safe:'high',
         fields:'items(link)',
-        cx: googleCseId,
-        key: googleApiKey
+        cx: store.googleCseId,
+        key: store.googleApiKey
       },
       uri = 'https://www.googleapis.com/customsearch/v1',
       google_callback = (err, res, body) => {
