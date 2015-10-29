@@ -1,6 +1,7 @@
  'use strict';
  let store = require('../store'),
      ImageMe = require('./image-me'),
+     RemindMe = require('./remind-me'),
      Slack = require('../controllers/slack');
 
  let Message = {
@@ -13,6 +14,12 @@
     if (data.type === 'message' && this.imageMe(data.text)) {
       this.findImage(data.text, (link) => {
         Slack.postMessageToChannel('test', link, store.post_params);
+      });
+    }
+    if (data.type === 'message' && this.remindMe(data.text)) {
+      console.log('post params: ', store.post_params);
+      this.findReminder(data.text, (message) => {
+        Slack.postMessageToChannel('test', message, store.post_params);
       });
     }
   },
@@ -28,12 +35,6 @@
     return this.response;
   },
 
-  imageMe: function(dataText) {
-    if (this.parseText(dataText, 'image me')) {
-      return true;
-    }
-  },
-
   findImage: function(text, message_cb) {
     let searchCriteria = text.match(/(image me)? (.*)/i).pop();
     ImageMe.search(searchCriteria, (link) => {
@@ -43,6 +44,29 @@
 
   parseText: function(text, key) {
     return text.toLowerCase().indexOf(key.toLowerCase()) >= 0;
+  },
+
+
+  findReminder: function(text, message_cb) {
+    let reminderData = text.match(/(remind me)? (\d+) (\w+) "([^"]*)"/i);
+    console.log('reminderData: ', reminderData);
+    RemindMe.create(reminderData, (reminder) => {
+      message_cb(reminder);
+    });
+  },
+
+
+
+  remindMe: function(dataText) {
+    if (this.parseText(dataText, 'remind me')) {
+      return true;
+    }
+  },
+
+  imageMe: function(dataText) {
+    if (this.parseText(dataText, 'image me')) {
+      return true;
+    }
   },
 
   hello: function(text) {

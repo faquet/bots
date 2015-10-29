@@ -1,5 +1,6 @@
 'use strict';
 const request = require('request'),
+      _ = require('underscore'),
       qs = require('querystring'),
       store = require('../store'),
       find = require('../utils').find;
@@ -40,14 +41,16 @@ let Slack = {
   },
 
   postMessage: function(id, text, params) {
-    params = {
+    let requiredParams = {
       text: text,
       channel: id,
       username: store.name,
       token: store.token
     };
 
-    return this.api('chat.postMessage', params);
+    let extendedParams = _.extend(params, requiredParams);
+
+    return this.api('chat.postMessage', extendedParams);
   },
 
   postMessageToChannel: function(name, text, params, cb) {
