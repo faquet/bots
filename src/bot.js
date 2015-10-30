@@ -5,9 +5,8 @@ const EventEmitter = require('events').EventEmitter;
 const Socket = require('ws');
 const qs = require('querystring');
 const request = require('request');
-const postMessage = require('./message');
 
-const Bot = class Bot {
+module.exports = class Bot {
   constructor(params) {
     this.token = params.token;
     this.name = params.name;
@@ -62,6 +61,9 @@ const Bot = class Bot {
       console.log(`${this.name} is logged in.`);
     });
   }
+  postMessage(params) {
+    this.api('chat.postMessage', params).then((data) => {
+      console.log(data);
+    });
+  }
 };
-
-module.exports = Bot;
