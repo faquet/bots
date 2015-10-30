@@ -3,47 +3,65 @@ const util = require('util');
 const extend = require('extend');
 const EventEmitter = require('events').EventEmitter;
 const Socket = require('ws');
-const api = require('./api');
+const qs = require('querystring');
+const request = require('request');
 const postMessage = require('./message');
 
-function Clang(params) {
-  this.token = params.token;
-  this.name = params.name;
-  this.start = start;
-  this.connect = connect;
-  this.postMessage = postMessage;
+const Bot = class Bot {
+  constructor(params) {
+    this.token = params.token;
+    this.name = params.name;
+    util.inherits(Bot, EventEmitter);
 
-  this.start();
+    this.start();
+    this.onStart();
+  }
+  start() {
+    let params = {token: this.token};
+
+    this.api('rtm.start', params).then((data) => {
+      this.connect(data.url);
+      this.emit('start');
+    });
+  }
+  connect(url) {
+    let socket = new Socket(url);
+
+    socket.on('open', (data) => {
+      this.emit('open', data);
+    });
+
+    socket.on('close', (data) => {
+      this.emit('close', data);
+    });
+
+    socket.on('message', (data) => {
+      try {
+        this.emit('message', JSON.parse(data));
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  }
+  api(method, params) {
+    let query = qs.stringify(params);
+    let path = `${method}?${query}`;
+    let url = `https://slack.com/api/${path}`;
+
+    return new Promise((resolve, reject) => {
+      request(url, (error, response, body) => {
+        if (!error && response.statusCode === 200) {
+          let data = JSON.parse(body);
+          resolve(data);
+        }
+      });
+    });
+  }
+  onStart() {
+    this.on('start', () => {
+      console.log(`${this.name} is logged in.`);
+    });
+  }
 };
 
-util.inherits(Clang, EventEmitter);
-
-const start = function() {
-  let params = {token: this.token};
-  api('rtm.start', params).then((data) => {
-    this.emit('start');
-    this.connect(data.url);
-  });
-};
-
-const connect = function(url) {
-  let socket = new Socket(url);
-
-  socket.on('open', (data) => {
-    this.emit('open', data);
-  });
-
-  socket.on('close', (data) => {
-    this.emit('close', data);
-  });
-
-  socket.on('message', (data) => {
-    try {
-      this.emit('message', JSON.parse(data));
-    } catch (err) {
-      console.log(err);
-    }
-  });
-};
-
-module.exports = Clang;
+module.exports = Bot;

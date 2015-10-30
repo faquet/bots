@@ -1,5 +1,4 @@
 'use strict';
-const api = require('./api');
 
 /**
  * Posts a message to a channel
@@ -9,7 +8,7 @@ const api = require('./api');
  * @returns {Promise}
  */
 const postMessage = (params) => {
-  api('chat.postMessage', params).then((data) => {
+  this.api('chat.postMessage', params).then((data) => {
     console.log(data);
   });
 };
