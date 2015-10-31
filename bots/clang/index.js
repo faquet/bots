@@ -1,14 +1,16 @@
 'use strict';
-const store = require('./lib/store');
 const Bot = require('../../src/bot');
 
 const clang = new Bot({
-  token     : store.token,
-  name      : store.name,
-  username  : store.username,
-  name      : store.name,
-  icon_url  : store.icon_url,
-  real_name : store.real_name
+  token      : process.env.CLANG_KEY,
+  name       : 'clang',
+  username   : 'clang',
+  real_name  : '__clang__',
+  icon_url   : 'http://geekdad.com/images_blogs/photos/uncategorized/2007/06/08/cb2.jpg'
+});
+
+clang.on('start', () => {
+  clang.post('roughhouse', 'I work now. I work for UPS.');
 });
 
 module.exports = clang;

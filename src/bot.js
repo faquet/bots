@@ -24,18 +24,22 @@ module.exports = class Bot {
   start() {
     let params = {token: this.token};
     this.api('rtm.start', params)
-      .then(data => {
-        return this.cacheTeamData(data);
+      .then(
+        data => {
+          return this.cacheTeamData(data);
       })
-      .then(data => {
-        return this.connect(this.url);
+      .then(
+        data => {
+          return this.connect(this.url);
       })
-      .then(data => {
-        this.onStart();
-        return this.emit('start');
+      .then(
+        data => {
+          this.onStart();
+          return this.emit('start');
       });
   }
   cacheTeamData(data) {
+    this.team = data.team.name;
     this.url = data.url;
     this.channels = data.channels;
     this.users = data.users;
@@ -64,7 +68,7 @@ module.exports = class Bot {
   }
   onStart() {
     this.on('start', () => {
-      console.log(`${this.name} is logged in.`);
+      console.log(`@${this.username} is logged in to ${this.team}`);
     });
   }
   api(method, params) {
@@ -82,14 +86,17 @@ module.exports = class Bot {
     });
   }
   postMessage(params) {
-    this.api('chat.postMessage', params).then(data => {
-      console.log(data);
-    });
+    this.api('chat.postMessage', params)
+      .then(
+        data => {
+          console.log(data);
+      });
   }
   getChannel(name) {
     return this.getChannels()
-      .then(data => {
-        return find(data.channels, name);
+      .then(
+        data => {
+          return find(data.channels, name);
       });
   }
   getChannels() {
@@ -99,30 +106,36 @@ module.exports = class Bot {
         return resolve(channels);
       });
     } else {
-      this.api('channels.list').then(data => {
-        return data;
-      });
+      this.api('channels.list')
+        .then(
+          data => {
+            return data;
+        });
     }
   }
   getChannelId(name) {
-    this.getChannel(name).then(channel => {
-      return channel.id;
-    });
+    this.getChannel(name)
+      .then(
+        channel => {
+          return channel.id;
+      });
   }
   post(name, text) {
-    this.getChannel(name).then(data => {
-        return this.postMessage({
-          channel   : data.id,
-          text      : text,
-          token     : this.token,
-          username  : this.username,
-          name      : this.name,
-          icon_url  : this.icon_url,
-          real_name : this.real_name
-        });
-      },
-      err => {
-        console.log(err);
+    this.getChannel(name)
+      .then(
+        data => {
+          return this.postMessage({
+            channel   : data.id,
+            text      : text,
+            token     : this.token,
+            username  : this.username,
+            name      : this.name,
+            icon_url  : this.icon_url,
+            real_name : this.real_name
+          });
+        },
+        err => {
+          return console.log(err);
       });
   }
 };
