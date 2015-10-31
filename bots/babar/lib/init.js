@@ -43,6 +43,7 @@ const connect = function(wsUrl) {
 
   socket.on('message', (data) => {
     try {
+      console.log('socket this', this);
       this.emit('message', JSON.parse(data));
     } catch (err) {
       console.log(err);

@@ -8,6 +8,11 @@ function find(arr, params) {
   return result;
 }
 
+function parse(text, key) {
+  return text.toLowerCase().indexOf(key.toLowerCase()) >= 0;
+}
+
 module.exports = {
   find: find,
+  parse: parse,
 };

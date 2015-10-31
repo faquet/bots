@@ -3,7 +3,7 @@
 
 const _ = require('underscore'),
       store = require('./lib/store'),
-      Message = require('./lib/responses/message'),
+      Response = require('./lib/responses/index'),
       Bot = require('./lib/init');
 
 
@@ -19,7 +19,8 @@ module.exports = () => {
   });
 
   babar.on('message', (data) => {
-    Message.init(data);
+    Response.init(data);
+    console.log('message data: ', data);
   });
 
 
