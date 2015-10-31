@@ -13,10 +13,13 @@ module.exports = class Bot {
   constructor(params) {
     this.token = params.token;
     this.name = params.name;
-    util.inherits(Bot, EventEmitter);
+    this.username = params.username;
+    this.name = params.name;
+    this.icon_url = params.icon_url;
+    this.real_name = params.real_name;
 
+    util.inherits(Bot, EventEmitter);
     this.start();
-    this.onStart();
   }
   start() {
     let params = {token: this.token};
@@ -28,6 +31,7 @@ module.exports = class Bot {
         return this.connect(this.url);
       })
       .then(data => {
+        this.onStart();
         return this.emit('start');
       });
   }
@@ -67,7 +71,7 @@ module.exports = class Bot {
     let query = qs.stringify(params);
     let path = `${method}?${query}`;
     let url = `https://slack.com/api/${path}`;
-    console.log(url);
+
     return new Promise((resolve, reject) => {
       request(url, (error, response, body) => {
         if (!error && response.statusCode === 200) {
@@ -83,23 +87,42 @@ module.exports = class Bot {
     });
   }
   getChannel(name) {
-    return this.getChannels().then(data => {
-      return find(data.channels, name);
-    });
+    return this.getChannels()
+      .then(data => {
+        return find(data.channels, name);
+      });
   }
   getChannels() {
     if (this.channels) {
       return new Promise((resolve, reject) => {
         let channels = {channels: this.channels};
-        resolve(channels);
+        return resolve(channels);
       });
     } else {
-      return this.api('channels.list');
+      this.api('channels.list').then(data => {
+        return data;
+      });
     }
   }
   getChannelId(name) {
-    return this.getChannel(name).then(channel => {
+    this.getChannel(name).then(channel => {
       return channel.id;
     });
+  }
+  post(name, text) {
+    this.getChannel(name).then(data => {
+        return this.postMessage({
+          channel   : data.id,
+          text      : text,
+          token     : this.token,
+          username  : this.username,
+          name      : this.name,
+          icon_url  : this.icon_url,
+          real_name : this.real_name
+        });
+      },
+      err => {
+        console.log(err);
+      });
   }
 };
