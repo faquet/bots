@@ -1,11 +1,9 @@
 'use strict';
 const CronJob = require('cron').CronJob;
-const store = require('./store');
 
-module.exports = (clang) => {
-  const cron = {};
+module.exports = (bot) => {
 
-  cron.biscuit = new CronJob('00 00 * * * *', () => {
+  bot.biscuit = new CronJob('00 00 * * * *', () => {
     let params = store.attributes;
     params.token = store.token;
     params.channel = store.test;
@@ -14,7 +12,7 @@ module.exports = (clang) => {
     clang.postMessage(params);
   }, null, true);
 
-  cron.triscuit = new CronJob('00 30 * * * *', () => {
+  bot.triscuit = new CronJob('00 30 * * * *', () => {
     let params = store.attributes;
     params.token = store.token;
     params.channel = store.test;
@@ -23,5 +21,5 @@ module.exports = (clang) => {
     clang.postMessage(params);
   }, null, true);
 
-  return cron;
+  return bot;
 };

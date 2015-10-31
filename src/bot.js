@@ -120,22 +120,30 @@ module.exports = class Bot {
           return channel.id;
       });
   }
-  post(name, text) {
-    this.getChannel(name)
-      .then(
-        data => {
-          return this.postMessage({
-            channel   : data.id,
-            text      : text,
-            token     : this.token,
-            username  : this.username,
-            name      : this.name,
-            icon_url  : this.icon_url,
-            real_name : this.real_name
-          });
-        },
-        err => {
-          return console.log(err);
-      });
+  post(type, name, text) {
+    switch (type) {
+      case 'channel':
+        var channel = this.getChannel(name);
+        break;
+      case 'user':
+        var user = this.getUser(name);
+        break;
+    }
+
+    channel.then(
+      data => {
+        return this.postMessage({
+          channel   : data.id,
+          text      : text,
+          token     : this.token,
+          username  : this.username,
+          name      : this.name,
+          icon_url  : this.icon_url,
+          real_name : this.real_name
+        });
+      },
+      err => {
+        return console.log(err);
+    });
   }
 };
