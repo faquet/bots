@@ -17,11 +17,24 @@ module.exports = class Bot {
   }
   start() {
     let params = {token: this.token};
-
-    this.api('rtm.start', params).then((data) => {
-      this.connect(data.url);
-      this.emit('start');
-    });
+    this.api('rtm.start', params)
+      .then(data => {
+        return this.cacheTeamData(data);
+      })
+      .then(data => {
+        return this.connect(this.url);
+      })
+      .then(data => {
+        return this.emit('start');
+      });
+  }
+  cacheTeamData(data) {
+    this.url = data.url;
+    this.channels = data.channels;
+    this.users = data.users;
+    this.ims = data.ims;
+    this.groups = data.groups;
+    return this;
   }
   connect(url) {
     let socket = new Socket(url);
@@ -42,6 +55,11 @@ module.exports = class Bot {
       }
     });
   }
+  onStart() {
+    this.on('start', () => {
+      console.log(`${this.name} is logged in.`);
+    });
+  }
   api(method, params) {
     let query = qs.stringify(params);
     let path = `${method}?${query}`;
@@ -56,14 +74,54 @@ module.exports = class Bot {
       });
     });
   }
-  onStart() {
-    this.on('start', () => {
-      console.log(`${this.name} is logged in.`);
+  postMessage(params) {
+    this.api('chat.postMessage', params).then(data => {
+      console.log(data);
     });
   }
-  postMessage(params) {
-    this.api('chat.postMessage', params).then((data) => {
-      console.log(data);
+  getGroup(name) {
+      return this.getGroups().then(function(data) {
+          return find(data.groups, { name: name });
+      });
+  }
+  getGroups() {
+    if (this.groups) {
+      return Vow.fulfill({ groups: this.groups });
+    }
+
+    return this._api('groups.list');
+  }
+  getGroupId(name) {
+    return this.getGroup(name).then(function(group) {
+        return group.id;
+    });
+  }
+  post(type, name, text, params, cb) {
+    let method;
+
+    switch (type) {
+      case 'group':
+        method = this.getGroupId;
+        break;
+      case 'channel':
+        method = this.getChannelId;
+        break;
+      case 'user':
+        method = this.getChatId;
+        break;
+    }
+
+    if (typeof params === 'function') {
+      cb = params;
+      params = null;
+    }
+
+    return this[method](name).then(function(itemId) {
+      return this.postMessage(itemId, text, params);
+    }.bind(this)).always(function(data) {
+        if (cb) {
+            cb(data._value);
+        }
     });
   }
 };
