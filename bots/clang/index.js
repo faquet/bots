@@ -7,4 +7,8 @@ const clang = new Bot({
   name: store.name
 });
 
+clang.on('start', () => {
+  clang.getChannel('repo');
+});
+
 module.exports = clang;

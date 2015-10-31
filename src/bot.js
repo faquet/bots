@@ -5,6 +5,9 @@ const EventEmitter = require('events').EventEmitter;
 const Socket = require('ws');
 const qs = require('querystring');
 const request = require('request');
+const helpers = require('./helpers');
+
+const find = helpers.find;
 
 module.exports = class Bot {
   constructor(params) {
@@ -64,7 +67,7 @@ module.exports = class Bot {
     let query = qs.stringify(params);
     let path = `${method}?${query}`;
     let url = `https://slack.com/api/${path}`;
-
+    console.log(url);
     return new Promise((resolve, reject) => {
       request(url, (error, response, body) => {
         if (!error && response.statusCode === 200) {
@@ -79,49 +82,24 @@ module.exports = class Bot {
       console.log(data);
     });
   }
-  getGroup(name) {
-      return this.getGroups().then(function(data) {
-          return find(data.groups, { name: name });
-      });
-  }
-  getGroups() {
-    if (this.groups) {
-      return Vow.fulfill({ groups: this.groups });
-    }
-
-    return this._api('groups.list');
-  }
-  getGroupId(name) {
-    return this.getGroup(name).then(function(group) {
-        return group.id;
+  getChannel(name) {
+    return this.getChannels().then(data => {
+      return find(data.channels, name);
     });
   }
-  post(type, name, text, params, cb) {
-    let method;
-
-    switch (type) {
-      case 'group':
-        method = this.getGroupId;
-        break;
-      case 'channel':
-        method = this.getChannelId;
-        break;
-      case 'user':
-        method = this.getChatId;
-        break;
+  getChannels() {
+    if (this.channels) {
+      return new Promise((resolve, reject) => {
+        let channels = {channels: this.channels};
+        resolve(channels);
+      });
+    } else {
+      return this.api('channels.list');
     }
-
-    if (typeof params === 'function') {
-      cb = params;
-      params = null;
-    }
-
-    return this[method](name).then(function(itemId) {
-      return this.postMessage(itemId, text, params);
-    }.bind(this)).always(function(data) {
-        if (cb) {
-            cb(data._value);
-        }
+  }
+  getChannelId(name) {
+    return this.getChannel(name).then(channel => {
+      return channel.id;
     });
   }
 };

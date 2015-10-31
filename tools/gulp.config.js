@@ -6,7 +6,9 @@ const $ = require('gulp-load-plugins')();
 const paths = {
   eslint: {
     src: [
-      '*.js',
+      'bots/**/*.js',
+      'tools/**/*.js',
+      'src/**/*.js',
       '!node_modules'
     ]
   }
