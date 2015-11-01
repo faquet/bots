@@ -1,14 +1,14 @@
  'use strict';
- let store = require('../store'),
+ let store = require('../config/store'),
      ImageMe = require('./image-me'),
      RemindMe = require('./remind-me'),
      MessageMe = require('./message-me'),
-     parse = require('../utils').parse,
+     parse = require('../config/utils').parse,
      Slack = require('../controllers/slack');
 
- let Index = {
+ let Modules = {
 
-  init: function(data) {
+  onMessage: function(data) {
     if (data.username === 'babar') {return;}
 
     this.messageMe(data);
@@ -47,7 +47,7 @@
 
 };
 
-module.exports = Index;
+module.exports = Modules;
 
 
 

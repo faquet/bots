@@ -3,7 +3,7 @@ const util = require('util'),
       extend = require('extend'),
       EventEmitter = require('events').EventEmitter,
       Socket = require('ws'),
-      Slack = require('./controllers/slack');
+      Slack = require('../controllers/slack');
 
 function Bot(params) {
   this.token = params.token;

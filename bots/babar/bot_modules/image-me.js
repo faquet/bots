@@ -2,7 +2,7 @@
 
 let request = require('request'),
     _ = require('underscore'),
-    store = require('../../lib/store'),
+    store = require('../config/store'),
     qs = require('querystring');
 
 let ImageMe = {

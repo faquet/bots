@@ -1,7 +1,6 @@
 'use strict';
 
-let store = require('../store'),
-    schedule = require('node-schedule'),
+let schedule = require('node-schedule'),
     moment = require('moment'),
     Slack = require('../controllers/slack');
 
@@ -24,11 +23,7 @@ let RemindMe = {
   },
 
   cleanseUnit: function(unit) {
-    if (unit.match(/(second)/i)) {return 'seconds';};
-    if (unit.match(/(minute)/i)) {return 'minutes';};
-    if (unit.match(/(hour)/i)) {return 'hours';};
-    if (unit.match(/(day)/i)) {return 'days';};
-    if (unit.match(/(month)/i)) {return 'months';};
+    if (!unit.match(/s$/i)) {return unit + 's';};
   },
 
 

@@ -2,8 +2,8 @@
 const request = require('request'),
       _ = require('underscore'),
       qs = require('querystring'),
-      store = require('../store'),
-      find = require('../utils').find;
+      store = require('../config/store'),
+      find = require('../config/utils').find;
 
 
 let Slack = {

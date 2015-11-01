@@ -1,4 +1,4 @@
-function find(arr, params) {
+exports.find = function(arr, params) {
   var result = {};
   arr.forEach(function(item) {
     if (Object.keys(params).every(function(key) { return item[key] === params[key];})) {
@@ -6,13 +6,8 @@ function find(arr, params) {
     }
   });
   return result;
-}
+};
 
-function parse(text, key) {
+exports.parse = function(text, key) {
   return text.toLowerCase().indexOf(key.toLowerCase()) >= 0;
-}
-
-module.exports = {
-  find: find,
-  parse: parse,
 };

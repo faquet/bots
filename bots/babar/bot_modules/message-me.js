@@ -1,10 +1,6 @@
 'use strict';
 
-let store = require('../store'),
-    schedule = require('node-schedule'),
-    moment = require('moment'),
-    Slack = require('../controllers/slack'),
-    parse = require('../utils').parse;
+let parse = require('../config/utils').parse;
 
 let MessageMe = {
 
