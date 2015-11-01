@@ -18,14 +18,16 @@ const opts = {
   notify: {
     eslint: (file) => {
       if (file.eslint.errorCount === 0) {
-        return false;
+        return;
       }
 
       let errors = file.eslint.messages.map((data) => {
-        return '(' + data.line + ':' + data.column + ') ' + data.message;
-      }).join('\n');
+        let location = `Line: ${data.line}:${data.column} |\n${data.message}`;
+        return location;
+      });
 
-      return file.relative + ' (' + file.eslint.errorCount + ' errors)\n' + errors;
+      let message = `File: ${file.relative} (${file.eslint.errorCount} errors)\n${errors}\n`;
+      return message;
     }
   },
   plumber: {
