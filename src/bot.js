@@ -14,7 +14,6 @@ module.exports = class Bot {
     this.token = params.token;
     this.name = params.name;
     this.username = params.username;
-    this.name = params.name;
     this.icon_url = params.icon_url;
     this.real_name = params.real_name;
 

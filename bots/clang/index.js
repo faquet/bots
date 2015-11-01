@@ -11,7 +11,7 @@ const clang = new Bot({
 });
 
 clang.on('start', () => {
-  clang.post('channel', 'roughhouse', 'I work now. I work for UPS.');
+  clang.post('channel', 'roughhouse', 'Sup dudez');
   scheduler(clang);
 });
 
