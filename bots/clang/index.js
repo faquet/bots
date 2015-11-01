@@ -12,7 +12,6 @@ const clang = new Bot({
 
 clang.on('start', () => {
   clang.post('channel', 'roughhouse', 'Sup dudez');
-  scheduler(clang);
 });
 
 module.exports = clang;
