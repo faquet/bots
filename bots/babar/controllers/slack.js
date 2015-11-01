@@ -3,10 +3,72 @@ const request = require('request'),
       _ = require('underscore'),
       qs = require('querystring'),
       store = require('../config/store'),
-      find = require('../config/utils').find;
+      ImageMe = require('../bot_modules/image-me'),
+      RemindMe = require('../bot_modules/remind-me'),
+      MessageMe = require('../bot_modules/message-me'),
+      find = require('../config/utils').find,
+      parse = require('../config/utils').parse;
 
 
 let Slack = {
+
+
+
+  onMessage: function(data) {
+    if (data.username === 'babar') {return;}
+
+    this.messageMe(data);
+    this.imageMe(data);
+    this.remindMe(data);
+  },
+
+
+
+/// weird, .bind(this) does not work with => functions
+  messageMe: function(data) {
+    if (data.type === 'message') {
+      MessageMe.findResponse(data.text, function(message) {
+        this.postMessage(data.channel, message, store.post_params);
+      }.bind(this));
+    }
+  },
+
+  remindMe: function(data) {
+    if (data.type === 'message' && parse(data.text, 'remind me')) {
+      let reminderData = data.text.match(/(\d+)\s(\w+)(?:\sto\s|\s)"([^"]*)"/i);
+      RemindMe.create(reminderData, function(reminder) {
+        this.postMessage(data.channel, reminder, store.post_params);
+      }.bind(this));
+    }
+  },
+
+  imageMe: function(data) {
+    if (data.type === 'message' && parse(data.text, 'image me')) {
+      let searchCriteria = data.text.match(/(image me)? (.*)/i).pop();
+      ImageMe.search(searchCriteria, function(link) {
+        this.postMessage(data.channel, link, store.post_params);
+      }.bind(this));
+    }
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   getChannels: function() {
     if (this.channels) {

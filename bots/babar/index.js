@@ -3,7 +3,7 @@
 
 const _ = require('underscore'),
 store = require('./config/store'),
-Modules = require('./bot_modules/index'),
+Slack = require('./controllers/slack'),
 Bot = require('./config/bot');
 
 
@@ -16,7 +16,7 @@ module.exports = function() {
   });
 
   babar.on('message', (data) => {
-    Modules.onMessage(data);
+    Slack.onMessage(data);
     console.log('message data: ', data);
   });
 
