@@ -14,7 +14,6 @@ module.exports = class Bot {
     this.token = params.token;
     this.name = params.name;
     this.username = params.username;
-    this.name = params.name;
     this.icon_url = params.icon_url;
     this.real_name = params.real_name;
 
@@ -120,30 +119,57 @@ module.exports = class Bot {
           return channel.id;
       });
   }
+  getUser(name) {
+    return this.getUsers()
+      .then(
+        data => {
+          return find(data.members, name);
+      });
+  }
+  getUsers() {
+    if (this.users) {
+      return new Promise((resolve, reject) => {
+        let members = {members: this.members};
+        return resolve(members);
+      });
+    } else {
+      this.api('users.list')
+        .then(
+          data => {
+            return data;
+        });
+    }
+  }
+  getCredentials() {
+    return {
+      token     : this.token,
+      username  : this.username,
+      name      : this.name,
+      icon_url  : this.icon_url,
+      real_name : this.real_name
+    };
+  }
   post(type, name, text) {
+    let params = this.getCredentials();
+    params.text = text;
+
     switch (type) {
       case 'channel':
-        var channel = this.getChannel(name);
+        this.getChannel(name)
+          .then(
+            data => {
+              params.channel = data.id;
+              return this.postMessage(params);
+            });
         break;
       case 'user':
-        var user = this.getUser(name);
+        this.getUser(name)
+          .then(
+            data => {
+              params.user = data.id;
+              return this.postMessage(params);
+            });
         break;
     }
-
-    channel.then(
-      data => {
-        return this.postMessage({
-          channel   : data.id,
-          text      : text,
-          token     : this.token,
-          username  : this.username,
-          name      : this.name,
-          icon_url  : this.icon_url,
-          real_name : this.real_name
-        });
-      },
-      err => {
-        return console.log(err);
-    });
   }
 };
