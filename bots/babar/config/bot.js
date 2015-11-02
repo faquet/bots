@@ -1,55 +1,45 @@
 'use strict';
+
 const util = require('util'),
       extend = require('extend'),
       EventEmitter = require('events').EventEmitter,
       Socket = require('ws'),
+      SocketServer = require('./socket'),
       Slack = require('../controllers/slack');
 
-function Bot(params) {
-  this.token = params.token;
-  this.name = params.name;
-  this.start = start;
-  this.connect = connect;
 
-  this.start();
+
+module.exports = class Bot {
+  constructor(store) {
+    this.token = store.bot_keys.token;
+    this.name = store.bot_keys.name;
+
+    util.inherits(Bot, EventEmitter);
+    this.start();
+  }
+
+  start() {
+    let params = {token: this.token};
+    console.log('huh', params);
+    Slack.api('rtm.start', params)
+    .then((data) => {
+
+      console.log('startData', data);
+      Slack.wsUrl = data.url;
+      Slack.channels = data.channels;
+      Slack.users = data.users;
+      Slack.ims = data.ims;
+      Slack.groups = data.groups;
+
+
+      console.log('dataurl', data.url);
+      this.connect(data.url);
+    });
+  }
+
+  connect(wsUrl) {
+    console.log('connect');
+    let socket = new Socket(wsUrl);
+    Server = SocketServer(socket);
+  }
 };
-
-util.inherits(Bot, EventEmitter);
-
-const start = function() {
-  let params = {token: this.token};
-  Slack.api('rtm.start', params).then((data) => {
-    Slack.wsUrl = data.url;
-    Slack.channels = data.channels;
-    Slack.users = data.users;
-    Slack.ims = data.ims;
-    Slack.groups = data.groups;
-
-    this.emit('start');
-    this.connect(data.url);
-  });
-};
-
-const connect = function(wsUrl) {
-  let socket = new Socket(wsUrl);
-
-  socket.on('open', (data) => {
-    this.emit('open', data);
-  });
-
-  socket.on('close', (data) => {
-    this.emit('close', data);
-  });
-
-  socket.on('message', (data) => {
-    try {
-      console.log('socket this', this);
-      this.emit('message', JSON.parse(data));
-    } catch (err) {
-      console.log(err);
-    }
-  });
-};
-
-
-module.exports = Bot;

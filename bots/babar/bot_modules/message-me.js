@@ -1,8 +1,8 @@
 'use strict';
 
-let parse = require('../config/utils').parse;
+const parse = require('../config/utils').parse;
 
-let MessageMe = {
+const MessageMe = {
 
   findResponse: function(text, send_message) {
     this.hello(text, send_message);
