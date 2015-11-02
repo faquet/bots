@@ -23,23 +23,24 @@ module.exports = class Bot {
     console.log('huh', params);
     Slack.api('rtm.start', params)
     .then((data) => {
-
-      console.log('startData', data);
-      Slack.wsUrl = data.url;
-      Slack.channels = data.channels;
-      Slack.users = data.users;
-      Slack.ims = data.ims;
-      Slack.groups = data.groups;
-
-
-      console.log('dataurl', data.url);
+      this.cacheTeamData(data);
       this.connect(data.url);
     });
   }
 
-  connect(wsUrl) {
+  cacheTeamData(data) {
+    this.team = data.team.name;
+    this.url = data.url;
+    this.channels = data.channels;
+    this.users = data.users;
+    this.ims = data.ims;
+    this.groups = data.groups;
+    return this;
+  }
+
+  connect(url) {
     console.log('connect');
-    let socket = new Socket(wsUrl);
+    let socket = new Socket(url);
     Server = SocketServer(socket);
   }
 };
