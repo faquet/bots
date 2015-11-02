@@ -119,6 +119,27 @@ module.exports = class Bot {
           return channel.id;
       });
   }
+  getUser(name) {
+    return this.getUsers()
+      .then(
+        data => {
+          return find(data.members, name);
+      });
+  }
+  getUsers() {
+    if (this.users) {
+      return new Promise((resolve, reject) => {
+        let members = {members: this.members};
+        return resolve(members);
+      });
+    } else {
+      this.api('users.list')
+        .then(
+          data => {
+            return data;
+        });
+    }
+  }
   getCredentials() {
     return {
       token     : this.token,
