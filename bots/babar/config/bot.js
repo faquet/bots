@@ -19,9 +19,7 @@ module.exports = class Bot {
   }
 
   start() {
-    let params = {token: this.token};
-    console.log('huh', params);
-    Slack.api('rtm.start', params)
+    Slack.api('rtm.start', {token: this.token})
     .then((data) => {
       this.cacheTeamData(data);
       this.connect(data.url);
@@ -39,8 +37,7 @@ module.exports = class Bot {
   }
 
   connect(url) {
-    console.log('connect');
     let socket = new Socket(url);
-    Server = SocketServer(socket);
+    Server = SocketServer(socket, this);
   }
 };

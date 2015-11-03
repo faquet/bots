@@ -2,12 +2,14 @@
 
 const Slack = require('../controllers/slack');
 
-function Server(socket) {
+function Server(socket, bot) {
 
-  console.log('server');
+  socket.on('open', () => {
+    console.log(`A motherfucka is connected . . . to ${bot.team}.\n${bot.name} can\'t feel his legs`);
+  });
 
-  socket.on('start', () => {
-    console.log('Babar can\'t feel his legs');
+  socket.on('close', () => {
+    console.log('he gone.');
   });
 
   socket.on('message', (rawData) => {
