@@ -7,7 +7,7 @@ const request = require('request'),
 
 const ImageMe = {
 
-  search: (text, send_message) => {
+  search(text, send_message) {
 
     if (store.googleCseId && store.googleApiKey) {
       let query = {

@@ -6,7 +6,7 @@ const schedule = require('node-schedule'),
 
 const RemindMe = {
 
-  create: function(reminderData, send_message) {
+  create(reminderData, send_message) {
     if (reminderData.length === 4) {
       this.duration = reminderData[1];
       this.unit = reminderData[2];
@@ -21,7 +21,7 @@ const RemindMe = {
     }
   },
 
-  cleanseUnit: function(unit) {
+  cleanseUnit(unit) {
     if (!unit.endsWith('s')) {
       return unit + 's';
     } else {

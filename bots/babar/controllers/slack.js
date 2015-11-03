@@ -12,7 +12,7 @@ const request = require('request'),
 
 const Slack = {
 
-  onMessage: function(data) {
+  onMessage(data) {
     if (data.username === store.bot_keys.name || data.message) {return;}
 
     this.messageMe(data);
@@ -22,7 +22,7 @@ const Slack = {
 
 
 
-  messageMe: function(data) {
+  messageMe(data) {
     if (data.type === 'message') {
       MessageMe.findResponse(data.text, (message) => {
         this.postMessage(data.channel, message, store.bot_keys);
@@ -30,7 +30,7 @@ const Slack = {
     }
   },
 
-  remindMe: function(data) {
+  remindMe(data) {
     if (data.type === 'message' && parse(data.text, 'remind me')) {
       let reminderData = data.text.match(/(\d+)\s(\w+)(?:\sto\s|\s)"([^"]*)"/i);
       RemindMe.create(reminderData, (reminder) => {
@@ -39,7 +39,7 @@ const Slack = {
     }
   },
 
-  imageMe: function(data) {
+  imageMe(data) {
     if (data.type === 'message' && parse(data.text, 'image me')) {
       let searchCriteria = data.text.match(/(image me)? (.*)/i).pop();
       ImageMe.search(searchCriteria, (link) => {
@@ -51,7 +51,7 @@ const Slack = {
 
 
 
-  postMessage: function(id, text, bot_keys) {
+  postMessage(id, text, bot_keys) {
     let params = _.extend({
       text: text,
       channel: id,
@@ -60,7 +60,7 @@ const Slack = {
     return this.api('chat.postMessage', params);
   },
 
-  api: function(method, params) {
+  api(method, params) {
     let query = qs.stringify(params);
     let path = `${method}?${query}`;
     let url = `https://slack.com/api/${path}`;
