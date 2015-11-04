@@ -5,8 +5,9 @@ const EventEmitter = require('events').EventEmitter;
 const Socket = require('ws');
 const qs = require('querystring');
 const request = require('request');
-const helpers = require('./helpers');
+const Cron = require('cron').CronJob;
 
+const helpers = require('./helpers');
 const find = helpers.find;
 
 module.exports = class Bot {
@@ -18,11 +19,11 @@ module.exports = class Bot {
     this.real_name = params.real_name;
 
     util.inherits(Bot, EventEmitter);
-    this.onStart();
     this.start();
   }
   start() {
     let params = {token: this.token};
+
     this.api('rtm.start', params)
       .then((data) => {
         return this.cacheTeamData(data);
@@ -31,6 +32,7 @@ module.exports = class Bot {
         return this.connect(this.url);
       })
       .then((data) => {
+        this.onStart();
         return this.emit('start');
       });
   }
@@ -81,8 +83,23 @@ module.exports = class Bot {
       });
     });
   }
-  postMessage(params) {
-    return this.api('chat.postMessage', params);
+  getCredentials() {
+    return {
+      token     : this.token,
+      username  : this.username,
+      name      : this.name,
+      icon_url  : this.icon_url,
+      real_name : this.real_name
+    };
+  }
+  post(name, text) {
+    return this.getChannel(name)
+      .then((data) => {
+        let params = this.getCredentials();
+        params.text = text;
+        params.channel = data.id;
+        return this.api('chat.postMessage', params);
+      });
   }
   getChannel(name) {
     return this.getChannels()
@@ -100,22 +117,9 @@ module.exports = class Bot {
       return this.api('channels.list');
     }
   }
-  getCredentials() {
-    return {
-      token     : this.token,
-      username  : this.username,
-      name      : this.name,
-      icon_url  : this.icon_url,
-      real_name : this.real_name
-    };
-  }
-  post(name, text) {
-    return this.getChannel(name)
-      .then((data) => {
-        let params = this.getCredentials();
-        params.text = text;
-        params.channel = data.id;
-        return this.postMessage(params);
-      });
+  schedule(time, name, text) {
+    return new Cron(time, () => {
+      return this.post(name, text);
+    }, null, true);
   }
 };

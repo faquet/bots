@@ -1,6 +1,5 @@
 'use strict';
 const Bot = require('../../src/bot');
-const scheduler = require('./lib/scheduler');
 
 const clang = new Bot({
   token      : process.env.CLANG_KEY,
@@ -11,5 +10,6 @@ const clang = new Bot({
 });
 
 clang.on('start', () => {
-  clang.post('roughhouse', 'I hate dinosaurs.');
+  clang.schedule('00 00 * * * *', 'roughhouse', 'I just ate a biscuit.');
+  clang.schedule('00 30 * * * *', 'roughhouse', 'I just ate a triscuit.');
 });
