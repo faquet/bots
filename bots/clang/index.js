@@ -11,6 +11,5 @@ const clang = new Bot({
 });
 
 clang.on('start', () => {
-  scheduler(clang, '00 00 * * * *', 'I just ate a biscuit.');
-  scheduler(clang, '00 30 * * * *', 'I just ate a triscuit.');
+  clang.post('roughhouse', 'I hate dinosaurs.');
 });

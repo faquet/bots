@@ -18,23 +18,20 @@ module.exports = class Bot {
     this.real_name = params.real_name;
 
     util.inherits(Bot, EventEmitter);
+    this.onStart();
     this.start();
   }
   start() {
     let params = {token: this.token};
     this.api('rtm.start', params)
-      .then(
-        data => {
-          return this.cacheTeamData(data);
+      .then((data) => {
+        return this.cacheTeamData(data);
       })
-      .then(
-        data => {
-          return this.connect(this.url);
+      .then((data) => {
+        return this.connect(this.url);
       })
-      .then(
-        data => {
-          this.onStart();
-          return this.emit('start');
+      .then((data) => {
+        return this.emit('start');
       });
   }
   cacheTeamData(data) {
@@ -71,31 +68,26 @@ module.exports = class Bot {
     });
   }
   api(method, params) {
-    let query = qs.stringify(params);
-    let path = `${method}?${query}`;
-    let url = `https://slack.com/api/${path}`;
+    const query = qs.stringify(params);
+    const path = `${method}?${query}`;
+    const url = `https://slack.com/api/${path}`;
 
     return new Promise((resolve, reject) => {
       request(url, (error, response, body) => {
         if (!error && response.statusCode === 200) {
-          let data = JSON.parse(body);
+          const data = JSON.parse(body);
           resolve(data);
         }
       });
     });
   }
   postMessage(params) {
-    this.api('chat.postMessage', params)
-      .then(
-        data => {
-          console.log(data);
-      });
+    return this.api('chat.postMessage', params);
   }
   getChannel(name) {
     return this.getChannels()
-      .then(
-        data => {
-          return find(data.channels, name);
+      .then((data) => {
+        return find(data.channels, name);
       });
   }
   getChannels() {
@@ -105,39 +97,7 @@ module.exports = class Bot {
         return resolve(channels);
       });
     } else {
-      this.api('channels.list')
-        .then(
-          data => {
-            return data;
-        });
-    }
-  }
-  getChannelId(name) {
-    this.getChannel(name)
-      .then(
-        channel => {
-          return channel.id;
-      });
-  }
-  getUser(name) {
-    return this.getUsers()
-      .then(
-        data => {
-          return find(data.members, name);
-      });
-  }
-  getUsers() {
-    if (this.users) {
-      return new Promise((resolve, reject) => {
-        let members = {members: this.members};
-        return resolve(members);
-      });
-    } else {
-      this.api('users.list')
-        .then(
-          data => {
-            return data;
-        });
+      return this.api('channels.list');
     }
   }
   getCredentials() {
@@ -149,27 +109,13 @@ module.exports = class Bot {
       real_name : this.real_name
     };
   }
-  post(type, name, text) {
-    let params = this.getCredentials();
-    params.text = text;
-
-    switch (type) {
-      case 'channel':
-        this.getChannel(name)
-          .then(
-            data => {
-              params.channel = data.id;
-              return this.postMessage(params);
-            });
-        break;
-      case 'user':
-        this.getUser(name)
-          .then(
-            data => {
-              params.user = data.id;
-              return this.postMessage(params);
-            });
-        break;
-    }
+  post(name, text) {
+    return this.getChannel(name)
+      .then((data) => {
+        let params = this.getCredentials();
+        params.text = text;
+        params.channel = data.id;
+        return this.postMessage(params);
+      });
   }
 };
