@@ -4,13 +4,17 @@ const parse = require('../config/utils').parse;
 
 const MessageMe = {
 
-  findResponse(text, send_message) {
-    this.hello(text, send_message);
-    this.water(text, send_message);
-    this.tomorrow(text, send_message);
-    this.kwak(text, send_message);
-    this.test(text, send_message);
-    this.wwe(text, send_message);
+
+  findResponse(data, send_message) {
+    if (data.type === 'message') {
+      let text = data.text;
+      this.hello(text, send_message);
+      this.water(text, send_message);
+      this.tomorrow(text, send_message);
+      this.kwak(text, send_message);
+      this.test(text, send_message);
+      this.wwe(text, send_message);
+    }
   },
 
   hello(text, send_message) {

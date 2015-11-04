@@ -12,10 +12,8 @@ function Server(socket, bot) {
     console.log('he gone.');
   });
 
-  socket.on('message', (rawData) => {
-    let data = JSON.parse(rawData);
-    Slack.onMessage(data);
-    console.log('message data: ', data);
+  socket.on('message', (data) => {
+    Slack.onMessage(JSON.parse(data));
   });
 
 };

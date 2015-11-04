@@ -3,23 +3,32 @@
 const request = require('request'),
     _ = require('underscore'),
     store = require('../config/store'),
-    qs = require('querystring');
+    qs = require('querystring'),
+    parse = require('../config/utils').parse;
 
 const ImageMe = {
 
-  search(text, send_message) {
+  search(data, send_message) {
 
-    if (store.googleCseId && store.googleApiKey) {
+    if (data.type === 'message' && 
+        parse(data.text, 'image me') && 
+        store.googleCseId && 
+        store.googleApiKey) {
+
+      let searchCriteria = data.text.match(/(image me)? (.*)/i).pop();
+
       let query = {
-        q: text,
+        q: searchCriteria,
         searchType:'image',
         safe:'high',
         fields:'items(link)',
         cx: store.googleCseId,
         key: store.googleApiKey
-      },
-      uri = 'https://www.googleapis.com/customsearch/v1',
-      google_callback = (err, res, body) => {
+      };
+
+      let uri = 'https://www.googleapis.com/customsearch/v1';
+
+      let google_callback = (err, res, body) => {
         if (!err && res.statusCode === 200) {
           let info = JSON.parse(body);
           let random_index = _.random(0, (info.items.length - 1));
@@ -35,8 +44,6 @@ const ImageMe = {
 
       request({qs: query, uri: uri, method: 'GET'}, google_callback);
 
-    } else {
-      return console.log("error: missing environment variables");
     }
   }
 
