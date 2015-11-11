@@ -2,7 +2,6 @@
 
 const schedule = require('node-schedule'),
       moment = require('moment'),
-      Slack = require('../controllers/slack'),
       parse = require('../config/utils').parse;
 
 const RemindMe = {

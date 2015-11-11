@@ -6,7 +6,9 @@ const request = require('request'),
       store = require('../config/store'),
       ImageMe = require('../bot_modules/image-me'),
       RemindMe = require('../bot_modules/remind-me'),
+      MarkovMe = require('../bot_modules/markov-me'),
       MessageMe = require('../bot_modules/message-me'),
+      MessageKeeper = require('../bot_modules/message-keeper'),
       parse = require('../config/utils').parse;
 
 
@@ -14,6 +16,17 @@ const Slack = {
 
   onMessage(data) {
     if (data.username === store.bot_keys.name || data.message) {return;}
+
+    MarkovMe.get(data, (markov) => {
+      console.log('--------------------');
+      console.log('markov:', markov);
+      this.postMessage(data.channel, markov, store.bot_keys);
+      console.log('--------------------');
+    });
+
+    MessageKeeper.saveMessage(data, (message) => {
+      console.log(`message: '${message}' saved`);
+    });
 
     MessageMe.findResponse(data, (message) => {
       this.postMessage(data.channel, message, store.bot_keys);

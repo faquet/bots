@@ -8,7 +8,7 @@ const MessageMe = {
   findResponse(data, send_message) {
     if (data.type === 'message') {
       let text = data.text;
-      this.hello(text, send_message);
+      // this.hello(text, send_message);
       this.water(text, send_message);
       this.tomorrow(text, send_message);
       this.kwak(text, send_message);
