@@ -5,7 +5,7 @@ const MessageKeeper = {
 
   saveMessage(data) {
 
-    if (data.type === 'message' && !parse(data.text, 'babar')) {
+    if (data.type === 'message') {
 
       const messageConfig = {
         message: data.text,

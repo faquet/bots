@@ -33,29 +33,3 @@ module.exports.select = (obj) => {
     }
   }
 };
-
-module.exports.confirmType = (t) => {
-  return Object.prototype.toString.call(t).slice(8, -1).toLowerCase();
-};
-
-module.exports.slugify = (value) => {
-
-  const escapeForRegExp = (value) => {
-  if (_.isUndefined(value)) {
-    return '';
-  }
-  return value.toString().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-  };
-
-  const trim = (value, chars) => {
-    chars = escapeForRegExp(chars);
-    return value.replace(new RegExp('^(' + chars + ')+|(' + chars + ')+$', 'g'), '').toLowerCase();
-  };
-
-  const toSlug = (value) => {
-    value = value || '';
-    return value.trim().replace(/[%\\\s\/?#\[\]@!\$&\'\(\)\*\+,;="]{1,}/g, '-').replace(/^-+|-+$/g,'').toLowerCase();
-  };
-
-  return toSlug(value);
-};
