@@ -27,7 +27,6 @@ const MarkovMe = {
           .start(word)
           .end()
           .runProcess((err, sentence) => {
-            console.log('sentence>>>>>>', sentence);
             send_message(this.sanitizeSentence(sentence));
             return;
           }).bind(this);
@@ -36,9 +35,8 @@ const MarkovMe = {
   },
 
   pickWord(text) {
-    let word = random(this.toArr(text));
-    console.log('word>>>>>>>>>>>', word);
-    return word;
+    return random(this.toArr(text));
+
   },
 
   sanitizeSentence(sentence) {

@@ -6,11 +6,8 @@ const parse = require('../config/utils').parse;
 const MessageKeeper = {
 
   saveMessage(data, cb) {
-
     if (data.type === 'message') {
-
-      let text = this.sanitize(data.text);
-
+      const text = this.sanitize(data.text);
       const messageConfig = {
         message: text,
         user: data.user,
