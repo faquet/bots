@@ -1,9 +1,9 @@
 'use strict';
 
 const Message = require('mongoose').model('Message');
-const MarkovChain = require('./markov');
-const utils = require('./utils');
+const MarkovChain = require('../lib/markov/markov');
 const parse = require('../config/utils').parse;
+const random = require('../config/utils').random;
 
 
 const MarkovMe = {
@@ -36,14 +36,15 @@ const MarkovMe = {
   },
 
   pickWord(text) {
-    let word = utils.random(this.toArr(text));
+    let word = random(this.toArr(text));
     console.log('word>>>>>>>>>>>', word);
     return word;
   },
 
   sanitizeSentence(sentence) {
     let capitalized = this.capitalizeFirstLetter(sentence);
-    return capitalized;
+    let punctuated = this.punctuateSentenceEnd(capitalized);
+    return punctuated;
   },
 
   toStr(messages) {
@@ -56,7 +57,15 @@ const MarkovMe = {
 
   capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+  },
+
+  punctuateSentenceEnd(string) {
+    if (string.slice(-1).match(/[.,!?]/g) === null) {
+      return string + random(['.', '.', '.', '.', '?']);
+    } else {
+      return string;
+    }
+  },
 
 
 };

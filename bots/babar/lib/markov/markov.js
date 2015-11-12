@@ -56,7 +56,7 @@ module.exports = class MarkovChain {
       });
       return resolve(texts);
     }).then((texts) => {
-      let words, curWord;
+      let curWord;
       this.parseFile(texts.toString());
       curWord = this.startFn(this.bank);
       this.sentence = curWord;

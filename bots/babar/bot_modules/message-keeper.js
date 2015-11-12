@@ -1,20 +1,32 @@
+'use strict';
+
 const Message = require('mongoose').model('Message');
 const parse = require('../config/utils').parse;
 
 const MessageKeeper = {
 
-  saveMessage(data) {
+  saveMessage(data, cb) {
 
     if (data.type === 'message') {
 
+      let text = this.sanitize(data.text);
+
       const messageConfig = {
-        message: data.text,
-        user: data.user,   
+        message: text,
+        user: data.user,
       };
 
       Message.create(messageConfig, function(err, message){
-        console.log('messagecb', message);
+        return cb(message);
       });
+    }
+  },
+
+  sanitize(message) {
+    if (message.slice(-1).match(/[.,!?]/g) === null) {
+      return message + '.';
+    } else {
+      return message;
     }
   }
 

@@ -25,7 +25,7 @@ const Slack = {
     });
 
     MessageKeeper.saveMessage(data, (message) => {
-      console.log(`message: '${message}' saved`);
+      console.log(`message ------- '${message}' ------- saved`);
     });
 
     MessageMe.findResponse(data, (message) => {
