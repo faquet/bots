@@ -1,5 +1,5 @@
 'use strict';
-const Bot = require('../../src/bot');
+const Bot = require('./bot');
 
 const clang = new Bot({
   token      : process.env.CLANG_KEY,

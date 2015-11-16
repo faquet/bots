@@ -6,9 +6,7 @@ const Socket = require('ws');
 const qs = require('querystring');
 const request = require('request');
 const Cron = require('cron').CronJob;
-
-const helpers = require('./helpers');
-const find = helpers.find;
+const find = require('./helpers').find;
 
 module.exports = class Bot {
   constructor(params) {
@@ -22,19 +20,15 @@ module.exports = class Bot {
     this.start();
   }
   start() {
-    let params = {token: this.token};
-
+    const params = { token: this.token };
     this.api('rtm.start', params)
-      .then((data) => {
-        return this.cacheTeamData(data);
-      })
-      .then((data) => {
-        return this.connect(this.url);
-      })
+      .then((data) => { return this.cacheTeamData(data); })
+      .then((data) => { return this.connect(this.url); })
       .then((data) => {
         this.onStart();
         return this.emit('start');
-      });
+      })
+      .catch((err) => console.log(err));
   }
   cacheTeamData(data) {
     this.team = data.team.name;
@@ -46,16 +40,9 @@ module.exports = class Bot {
     return this;
   }
   connect(url) {
-    let socket = new Socket(url);
-
-    socket.on('open', (data) => {
-      this.emit('open', data);
-    });
-
-    socket.on('close', (data) => {
-      this.emit('close', data);
-    });
-
+    const socket = new Socket(url);
+    socket.on('open', (data) => this.emit('open', data));
+    socket.on('close', (data) => this.emit('close', data));
     socket.on('message', (data) => {
       try {
         this.emit('message', JSON.parse(data));
@@ -85,17 +72,17 @@ module.exports = class Bot {
   }
   getCredentials() {
     return {
-      token     : this.token,
-      username  : this.username,
-      name      : this.name,
-      icon_url  : this.icon_url,
-      real_name : this.real_name
+      token: this.token,
+      username: this.username,
+      name: this.name,
+      icon_url: this.icon_url,
+      real_name: this.real_name
     };
   }
   post(name, text) {
     return this.getChannel(name)
       .then((data) => {
-        let params = this.getCredentials();
+        const params = this.getCredentials();
         params.text = text;
         params.channel = data.id;
         return this.api('chat.postMessage', params);
@@ -103,14 +90,12 @@ module.exports = class Bot {
   }
   getChannel(name) {
     return this.getChannels()
-      .then((data) => {
-        return find(data.channels, name);
-      });
+      .then((data) => { return find(data.channels, name); });
   }
   getChannels() {
     if (this.channels) {
       return new Promise((resolve, reject) => {
-        let channels = {channels: this.channels};
+        const channels = {channels: this.channels};
         return resolve(channels);
       });
     } else {
