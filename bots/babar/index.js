@@ -1,8 +1,15 @@
 
+// 'use strict';
+
+// const store = require('./config/store'),
+//       Bot = require('./config/bot');
+
+
+// Bot(store);
+
+
 'use strict';
+const store = require('./config/store');
+const Bot = require('../../src');
 
-const store = require('./config/store'),
-      Bot = require('./config/bot');
-
-
-new Bot(store);
+const babar = Bot(store);

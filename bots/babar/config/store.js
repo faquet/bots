@@ -5,12 +5,12 @@ const googleCseId = process.env.BOT_GOOGLE_IMAGE_SEARCH_ID,
 
 
 module.exports = {
-  googleCseId: googleCseId,
-  googleApiKey: googleApiKey,
-  bot_keys: {
-    token: babarKey,
-    name: 'babar',
-    username: 'babar',
-    icon_url: 'http://i.imgur.com/p51tcBd.jpg?1',
+  google_keys: {
+    googleCseId: googleCseId,
+    googleApiKey: googleApiKey,
   },
+  token: babarKey,
+  name: 'babar',
+  username: 'babar',
+  icon_url: 'http://i.imgur.com/p51tcBd.jpg?1',
 };

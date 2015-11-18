@@ -8,25 +8,20 @@ const util = require('util'),
       Slack = require('../controllers/slack');
 
 
+function Bot(store) {
 
-module.exports = class Bot {
-  constructor(store) {
-    this.token = store.bot_keys.token;
-    this.name = store.bot_keys.name;
+  this.token = store.bot_keys.token;
+  this.name = store.bot_keys.name;
 
-    util.inherits(Bot, EventEmitter);
-    this.start();
-  }
-
-  start() {
+  this.start = function() {
     Slack.api('rtm.start', {token: this.token})
     .then((data) => {
       this.cacheTeamData(data);
       this.connect(data.url);
     });
-  }
+  };
 
-  cacheTeamData(data) {
+  this.cacheTeamData = function(data) {
     this.team = data.team.name;
     this.url = data.url;
     this.channels = data.channels;
@@ -34,10 +29,20 @@ module.exports = class Bot {
     this.ims = data.ims;
     this.groups = data.groups;
     return this;
-  }
+  };
 
-  connect(url) {
+  this.connect = function(url) {
     let socket = new Socket(url);
     Server = SocketServer(socket, this);
-  }
+  };
+
+  this.start();
 };
+
+
+function BotFactory(store) {
+  new Bot(store);
+}
+
+
+module.exports = BotFactory;

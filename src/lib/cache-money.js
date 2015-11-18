@@ -16,6 +16,10 @@ const WebSocket = require('ws');
 const mixin = require('merge-descriptors');
 const request = require('request');
 const qs = require('querystring');
+const Socket = require('./socket');
+const BM = require('./bot_modules/index');
+
+
 
 exports = module.exports = Bot;
 
@@ -50,7 +54,10 @@ function Bot(params) {
     const defaults = {
       username: 'Vesclovious',
       icon_url: 'https://avatars0.githubusercontent.com/u/12116474?v=3&amp;s=200',
-      real_name: ''
+      real_name: '',
+      image_me: true,
+      message_me: true,
+      remind_me: true,
     };
 
     mixin(this, EventEmitter.prototype, false);
@@ -58,6 +65,8 @@ function Bot(params) {
 
     this.store = defaults;
     this.token = params.token;
+
+    this.moduleConfig(this.store);
     this.connect();
   };
 
@@ -78,17 +87,19 @@ function Bot(params) {
 
       .then((data) => {
         const wb = new WebSocket(this.url);
-        wb.on('open', (data) => this.emit('open', data));
-        wb.on('close', (data) => this.emit('close', data));
-        wb.on('message', (data) => {
-          try { this.emit('message', JSON.parse(data)); }
-          catch (err) { console.log(err); }
-        });
+        const SocketServer = Socket(wb, this);
+
+        // wb.on('open', (data) => this.emit('open', data));
+        // wb.on('close', (data) => this.emit('close', data));
+        // wb.on('message', (data) => {
+        //   try { this.emit('message', JSON.parse(data)); }
+        //   catch (err) { console.log(err); }
+        // });
       })
 
       .then((data) => {
-        this.connected();
-        return this.emit('start');
+        // this.connected();
+        // return this.emit('start');
       })
       .catch((err) => console.log(err));
   };
@@ -99,12 +110,16 @@ function Bot(params) {
  * @public
  */
 
-  bot.connected = function connected() {
-    this.on('start', () => {
-      console.log(`@${this.store.username} is logged in to ${this.team.name}`);
-    });
-    return this;
-  };
+
+
+  // bot.connected = function connected() {
+  //   this.on('start', () => {
+  //     console.log(`@${this.store.username} is logged in to ${this.team.name}`);
+  //   });
+  //   return this;
+  // };
+
+
 
 /**
  * Request to web API.
@@ -124,9 +139,48 @@ function Bot(params) {
           const data = JSON.parse(body);
           resolve(data);
         }
+        if (error || response.statusCode !== 200) {
+          console.log('response: ', response.statusCode);
+          return console.log('error: ', error);
+        }
       });
     });
   };
+
+
+/**
+ * Post message to Slack API.
+ *
+ * @private
+ */
+
+  bot.postMessage = function(id, text) {
+    let params =  mixin({
+      text: text,
+      channel: id,
+    }, this.store);
+
+    return this.req('chat.postMessage', params);
+  };
+
+
+  /**
+ * Bot config.
+ *
+ * @public
+ */
+
+  bot.moduleConfig = function(store) {
+    console.log('moduleConfig');
+    if (store.image_me) { bot.ImageMe = BM.ImageMe; }
+    if (store.remind_me) { bot.RemindMe = BM.RemindMe; }
+    if (store.message_me) { bot.MessageMe = BM.MessageMe; }
+  };
+
+
+
+
+
 
   bot.defaultConfiguration();
 
