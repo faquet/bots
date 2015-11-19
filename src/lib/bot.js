@@ -8,19 +8,19 @@ const proto = require('./proto');
 const mixin = require('merge-descriptors');
 
 /**
- * Expose `createApplication()`.
+ * Expose `createBot()`.
  */
 
-exports = module.exports = Bot;
+exports = module.exports = createBot;
 
 /**
- * Create an bot.
+ * Create a bot instance.
  *
  * @return {Function}
  * @api public
  */
 
-function Bot(params) {
+function createBot(params) {
   const bot = {};
 
   mixin(bot, proto, false);
