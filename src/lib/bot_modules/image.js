@@ -5,19 +5,14 @@ const request = require('request'),
     qs = require('querystring'),
     parse = require('../utils').parse;
 
-function ImageMe(params) {
+function Image(params) {
 
-  console.log('imageme params', params);
-
-  this.googleCseId = params.googleCseId;
-  this.googleApiKey = params.googleApiKey;
-
-  this.search = function(data, send_message) {
+  Image.init = function(data, send_message) {
 
     if (data.type === 'message' && 
         parse(data.text, 'image me') && 
-        this.googleCseId && 
-        this.googleApiKey) {
+        params.googleCseId && 
+        params.googleApiKey) {
 
       let searchCriteria = data.text.match(/(image me)? (.*)/i).pop();
 
@@ -26,8 +21,8 @@ function ImageMe(params) {
         searchType:'image',
         safe:'high',
         fields:'items(link)',
-        cx: this.googleCseId,
-        key: this.googleApiKey
+        cx: params.googleCseId,
+        key: params.googleApiKey
       };
 
       let uri = 'https://www.googleapis.com/customsearch/v1';
@@ -48,12 +43,14 @@ function ImageMe(params) {
 
       request({qs: query, uri: uri, method: 'GET'}, google_callback);
 
+    } else {
+      console.log('Error: Make sure you have a googleCseId and googleApiKey');
     }
   };
 
-  return this;
+  return Image;
 
 
 };
 
-module.exports = ImageMe;
+module.exports = Image;

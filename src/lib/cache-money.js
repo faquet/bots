@@ -17,7 +17,7 @@ const mixin = require('merge-descriptors');
 const request = require('request');
 const qs = require('querystring');
 const Socket = require('./socket');
-const BM = require('./bot_modules/index');
+// const BM = require('./bot_modules/index');
 
 
 
@@ -55,9 +55,11 @@ function Bot(params) {
       username: 'Vesclovious',
       icon_url: 'https://avatars0.githubusercontent.com/u/12116474?v=3&amp;s=200',
       real_name: '',
-      image_me: true,
-      message_me: true,
-      remind_me: true,
+      modules: {
+        image: true,
+        message: true,
+        remind: true,
+      }
     };
 
     mixin(this, EventEmitter.prototype, false);
@@ -66,7 +68,7 @@ function Bot(params) {
     this.store = defaults;
     this.token = params.token;
 
-    this.moduleConfig(this.store);
+    this.moduleConfig();
     this.connect();
   };
 
@@ -170,12 +172,17 @@ function Bot(params) {
  * @public
  */
 
-  bot.moduleConfig = function(store) {
-    console.log('moduleConfig');
-    if (store.image_me) { bot.ImageMe = BM.ImageMe; }
-    if (store.remind_me) { bot.RemindMe = BM.RemindMe; }
-    if (store.message_me) { bot.MessageMe = BM.MessageMe; }
+ bot.moduleConfig = function() {
+    let path = require("path").join(__dirname, "bot_modules");
+    require("fs").readdirSync(path).forEach((file) => {
+      let Module = require("./bot_modules/" + file);
+      let module_name = file.slice(0, -3);
+      if (bot.store.modules[module_name]) {
+        bot.store.modules[module_name] = Module;
+      }
+    });
   };
+
 
 
 
