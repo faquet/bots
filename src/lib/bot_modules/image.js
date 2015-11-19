@@ -40,11 +40,7 @@ function Image(params) {
           return console.log('request error: ', err);
         }
       };
-
       request({qs: query, uri: uri, method: 'GET'}, google_callback);
-
-    } else {
-      console.log('Error: Make sure you have a googleCseId and googleApiKey');
     }
   };
 

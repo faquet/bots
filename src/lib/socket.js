@@ -6,18 +6,18 @@ function SocketServer(socket, bot) {
 
   const BM = bot.store.modules;
 
-  socket.on('open', () => {
+  const Open = () => {
     console.log(`A motherfucka is connected . . . to ${bot.team.name}.\n
       ${bot.store.name} can\'t feel his legs`
     );
-  });
+  };
 
-  socket.on('close', () => {
+  const Close = () => {
     console.log('he gone.');
-  });
+  };
 
-  socket.on('message', (data) => {
-    let dat = JSON.parse(data);
+  const Message = (data) => {
+    const dat = JSON.parse(data);
 
     if ( 
       dat.username === bot.store.name || 
@@ -36,7 +36,13 @@ function SocketServer(socket, bot) {
       }
     };
 
-});
+  };
+
+  socket.on('open', Open);
+
+  socket.on('close', Close);
+
+  socket.on('message', Message);
 
 };
 

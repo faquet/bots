@@ -56,7 +56,6 @@ function Bot(params) {
       icon_url: 'https://avatars0.githubusercontent.com/u/12116474?v=3&amp;s=200',
       real_name: '',
       modules: {
-        image: true,
         message: true,
         remind: true,
       }
@@ -90,13 +89,6 @@ function Bot(params) {
       .then((data) => {
         const wb = new WebSocket(this.url);
         const SocketServer = Socket(wb, this);
-
-        // wb.on('open', (data) => this.emit('open', data));
-        // wb.on('close', (data) => this.emit('close', data));
-        // wb.on('message', (data) => {
-        //   try { this.emit('message', JSON.parse(data)); }
-        //   catch (err) { console.log(err); }
-        // });
       })
 
       .then((data) => {
@@ -157,7 +149,7 @@ function Bot(params) {
  */
 
   bot.postMessage = function(id, text) {
-    let params =  mixin({
+    const params =  mixin({
       text: text,
       channel: id,
     }, this.store);
@@ -169,11 +161,11 @@ function Bot(params) {
   /**
  * Bot config.
  *
- * @public
+ * @private
  */
 
  bot.moduleConfig = function() {
-    let path = require("path").join(__dirname, "bot_modules");
+    const path = require("path").join(__dirname, "bot_modules");
     require("fs").readdirSync(path).forEach((file) => {
       let Module = require("./bot_modules/" + file);
       let module_name = file.slice(0, -3);
