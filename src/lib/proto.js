@@ -26,7 +26,7 @@ const Bot = exports = module.exports = {
  * @private
  */
 
-  init: function(params) {
+  init: function init(params) {
     if (!params.token) {
       throw new Error('No token was provided');
     }
@@ -45,7 +45,7 @@ const Bot = exports = module.exports = {
  * @private
  */
 
-  connect: function() {
+  connect: function connect() {
     this.request('rtm.start', this)
 
     .then((data) => {
@@ -84,7 +84,7 @@ const Bot = exports = module.exports = {
  * @private
  */
 
-  request: function req(method, params) {
+  request: function request(method, params) {
     const url = `https://slack.com/api/${method}?${qs.stringify(params)}`;
 
     return new Promise((resolve, reject) => {
