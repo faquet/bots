@@ -1,3 +1,3 @@
 'use strict';
 
-module.exports = require('./lib/cache-money');
+module.exports = require('./lib/bot');

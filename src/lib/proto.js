@@ -1,9 +1,3 @@
-/*!
- * cache-money
- * Copyright(c) 2015 Evan "Chef Boyardeez Nuts" Turner
- * MIT Licensed
- */
-
 'use strict';
 
 /**
@@ -16,7 +10,7 @@ const WebSocket = require('ws');
 const mixin = require('merge-descriptors');
 const request = require('request');
 const qs = require('querystring');
-const Socket = require('./socket');
+const ws = require('ws');
 
 /**
  * Bot prototype.
@@ -52,9 +46,11 @@ const Bot = exports = module.exports = {
  */
 
   connect: function() {
-    this.req('rtm.start', this.store)
+    this.request('rtm.start', this)
 
     .then((data) => {
+      mixin(this, data.self, false);
+      mixin(this, data.team, false);
       mixin(this, data, false);
       return this;
     })
@@ -70,9 +66,14 @@ const Bot = exports = module.exports = {
         try { this.emit('message', JSON.parse(data)); }
         catch (err) { console.log(err); }
       });
+
+      this.on('start', () => console.log(`${this.name} connected to ${this.team.name}`));
     })
 
-    .then((data) => { return this.emit('start'); });
+    .then((data) => {
+
+      return this.emit('start');
+    })
 
     .catch((err) => console.log(err));
   },

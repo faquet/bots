@@ -1,14 +1,11 @@
 'use strict';
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-
 const express = require('express');
 const app = express();
 const mongoose = require('./bots/babar/config/mongoose');
 const db = mongoose();
+const bots = require('./bots');
 
-
-const clang = require('./bots/clang');
-require('./bots/babar');
-
+bots();
 
 app.listen(3000);
