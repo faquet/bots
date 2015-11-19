@@ -40,7 +40,7 @@ const Bot = exports = module.exports = {
 
 /**
  * Start session.
- *   - establish connection with a chatroom
+ *   - establish connection
  *
  * @private
  */
@@ -70,10 +70,7 @@ const Bot = exports = module.exports = {
       this.on('start', () => console.log(`${this.name} connected to ${this.team.name}`));
     })
 
-    .then((data) => {
-
-      return this.emit('start');
-    })
+    .then((data) => { return this.emit('start'); })
 
     .catch((err) => console.log(err));
   },
