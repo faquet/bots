@@ -28,4 +28,12 @@ Events.req = function req(data) {
   }
 };
 
+Events.start = function() {
+  this.on('start', () => {
+    console.log(`[bot] - @${this.name} connected to ${this.team.name}`)
+  });
+
+  return this.request('rtm.start', this);
+};
+
 module.exports = Events;

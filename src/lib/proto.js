@@ -36,6 +36,9 @@ const Bot = exports = module.exports = {
     }
     this.triggers = params.triggers;
     this.token = params.token;
+    this.username = params.username;
+    this.name = params.name;
+    this.real_name = params.real_name;
     this.icon_url = params.icon_url || 'https://avatars0.githubusercontent.com/u/12116474?v=3&amp;s=200';
     mixin(this, Events, false);
     this.connect();
@@ -49,8 +52,7 @@ const Bot = exports = module.exports = {
  */
 
   connect: function connect() {
-    this.request('rtm.start', this)
-
+    this.start()
     .then((data) => {
       mixin(this, data.self, false);
       mixin(this, data.team, false);
@@ -70,8 +72,6 @@ const Bot = exports = module.exports = {
         try { this.emit('message', this.req(data)); }
         catch (err) { console.log(err); }
       });
-
-      this.on('start', () => console.log(`${this.name} connected to ${this.team.name}`));
     })
 
     .then((data) => { return this.emit('start'); })
@@ -101,11 +101,33 @@ const Bot = exports = module.exports = {
       });
     });
   },
+
+ /**
+ * Executes the method associated with the trigger.
+ *
+ * @param {Object} data
+ * @private
+ */
+
   handleResponse: function handleResponse(data) {
     for (let t in this.triggers) {
       if (data.text.includes(t)) {
-        this[t]();
+        console.log(data);
+        this[t](data);
       }
     }
+  },
+
+ /**
+ * Posts message.
+ *
+ * @param {Object} channel
+ * @param {Object} text
+ * @param {Object} token
+ * @public
+ */
+
+  postMessage: function postMessage(params) {
+    return this.request('chat.postMessage', params);
   },
 };

@@ -7,7 +7,7 @@ const bots = [
     active: true
   },{
     name: 'babar',
-    active: false
+    active: true
   }
 ];
 

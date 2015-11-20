@@ -15,7 +15,17 @@ module.exports = {
       console.log('I work.');
     },
     gif: function gif(data) {
+      console.log(data);
+      const params = {
+        channel: data.channel,
+        text: `I can't do that yet. In fact I refuse.`
+      };
+      params.username = this.username;
+      params.icon_url = this.icon_url;
+      params.token = this.token;
+      params.name = this.name;
       console.log('Me work.');
+      return this.postMessage(params);
     }
   }
 };
