@@ -8,7 +8,7 @@
 const EventEmitter = require('events').EventEmitter;
 const WebSocket = require('ws');
 const mixin = require('merge-descriptors');
-const request = require('request');
+const r = require('request');
 const qs = require('querystring');
 const ws = require('ws');
 
@@ -54,6 +54,7 @@ const Bot = exports = module.exports = {
       mixin(this, data, false);
       return this;
     })
+    .catch((err) => console.log(err))
 
     .then((data) => {
       const wb = new WebSocket(this.url);
@@ -88,7 +89,7 @@ const Bot = exports = module.exports = {
     const url = `https://slack.com/api/${method}?${qs.stringify(params)}`;
 
     return new Promise((resolve, reject) => {
-      request(url, (error, response, body) => {
+      r(url, (error, response, body) => {
         if (!error && response.statusCode === 200) {
           resolve(JSON.parse(body));
         } else if (error || response.statusCode !== 200) {
