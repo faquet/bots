@@ -27,14 +27,7 @@ function SocketServer(socket, bot) {
         return;
       }
 
-    for (let bot_module of Object.keys(BM)) {
-      if (BM[bot_module]) {
-        BM[bot_module](bot.store).init(dat, (message) => {
-          console.log('message', message);
-          return bot.postMessage(dat.channel, message, bot.store);
-        });
-      }
-    };
+    bot.moduleFunnel(dat);
 
   };
 

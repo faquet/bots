@@ -1,8 +1,8 @@
-var config = require('./config'),
+var store = require('./store'),
     mongoose = require('mongoose');
 
 module.exports = function() {
-  var db = mongoose.connect(config.db);
+  var db = mongoose.connect(store.db);
 
   require('../models/message');
 

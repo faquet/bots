@@ -12,4 +12,8 @@
 const store = require('./config/store');
 const Bot = require('../../src');
 
-const babar = Bot(store);
+
+Bot(store).then(function(babar){
+  babar.createMessage('yoyo', 'yoyo', 'plickity-plow');
+});
+

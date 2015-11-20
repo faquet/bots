@@ -41,6 +41,8 @@ function Bot(params) {
  */
 
   const bot = {};
+  const modules = {};
+  const pub = {};
 
 /**
  * Initialize bot configuration.
@@ -67,8 +69,10 @@ function Bot(params) {
     this.store = defaults;
     this.token = params.token;
 
-    this.moduleConfig();
-    this.connect();
+    return new Promise((resolve, reject) => {
+      return resolve(bot.connect());
+    });
+
   };
 
 /**
@@ -79,11 +83,15 @@ function Bot(params) {
  */
 
   bot.connect = function connect() {
-    this.req('rtm.start', this.store)
+    return this.req('rtm.start', this.store)
 
       .then((data) => {
         mixin(this, data, false);
-        return this;
+        
+    bot.moduleConfig();
+    bot.loadModules();
+    bot.userMethods();
+        // return this;
       })
 
       .then((data) => {
@@ -92,8 +100,9 @@ function Bot(params) {
       })
 
       .then((data) => {
-        // this.connected();
-        // return this.emit('start');
+        this.connected();
+        this.emit('start');
+        return bot;
       })
       .catch((err) => console.log(err));
   };
@@ -106,12 +115,16 @@ function Bot(params) {
 
 
 
-  // bot.connected = function connected() {
-  //   this.on('start', () => {
-  //     console.log(`@${this.store.username} is logged in to ${this.team.name}`);
-  //   });
-  //   return this;
-  // };
+  bot.connected = function connected() {
+    this.on('start', () => {
+      // this.store.methods();
+
+// modules.message.create('yoyo', 'yoyo', 'plickity-plow');
+      
+      console.log(`@${this.store.username} is logged in to ${this.team.name}`);
+    });
+    return this;
+  };
 
 
 
@@ -170,18 +183,47 @@ function Bot(params) {
       let Module = require("./bot_modules/" + file);
       let module_name = file.slice(0, -3);
       if (bot.store.modules[module_name]) {
-        bot.store.modules[module_name] = Module;
+        modules[module_name] = Module;
       }
     });
   };
 
+  /**
+ * Load Bot Modules.
+ *
+ * @private
+ */
+
+ bot.loadModules = function() {
+    for (let mod of Object.keys(modules)) {
+      if (modules[mod]) {
+        modules[mod].init(bot.store);
+      }
+    }
+  };
+
+
+  /**
+ * Funnel Slack Messages Through Bot Modules.
+ *
+ * @private
+ */
+
+  bot.moduleFunnel = function(data) {
+    for (let mod of Object.keys(modules)) {
+      modules[mod].funnel(data, (message) => {
+        console.log('message', message);
+        return bot.postMessage(data.channel, message, bot.store);
+      });
+    };
+  };
+
+  bot.userMethods = function() {
+    bot.createMessage = modules.message.create;
+  };
 
 
 
+  return bot.defaultConfiguration();
 
-
-
-  bot.defaultConfiguration();
-
-  return bot;
 };

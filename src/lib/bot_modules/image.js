@@ -5,14 +5,22 @@ const request = require('request'),
     qs = require('querystring'),
     parse = require('../utils').parse;
 
-function Image(params) {
+const Image = {
 
-  Image.init = function(data, send_message) {
+  init: function(params) {
+    if (!params.googleCseId || !params.googleApiKey) { 
+      throw new Error('please provide google keys');
+    }
+
+    this.googleCseId = params.googleCseId;
+    this.googleApiKey = params.googleApiKey;
+
+  },
+
+  funnel: function(data, send_message) {
 
     if (data.type === 'message' && 
-        parse(data.text, 'image me') && 
-        params.googleCseId && 
-        params.googleApiKey) {
+        parse(data.text, 'image me')) {
 
       let searchCriteria = data.text.match(/(image me)? (.*)/i).pop();
 
@@ -21,8 +29,8 @@ function Image(params) {
         searchType:'image',
         safe:'high',
         fields:'items(link)',
-        cx: params.googleCseId,
-        key: params.googleApiKey
+        cx: this.googleCseId,
+        key: this.googleApiKey
       };
 
       let uri = 'https://www.googleapis.com/customsearch/v1';
@@ -42,9 +50,7 @@ function Image(params) {
       };
       request({qs: query, uri: uri, method: 'GET'}, google_callback);
     }
-  };
-
-  return Image;
+  }
 
 
 };

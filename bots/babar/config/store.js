@@ -1,7 +1,9 @@
 
 const googleCseId = process.env.BOT_GOOGLE_IMAGE_SEARCH_ID,
       googleApiKey = process.env.BOT_GOOGLE_IMAGE_SEARCH_SERVER_KEY,
-      babarKey = process.env.BABAR_KEY;
+      babarKey = process.env.BABAR_KEY,
+      port = process.env.PORT || 3000,
+      db = process.env.MONGOLAB_URI || 'mongodb://localhost/bot_database';
 
 
 module.exports = {
@@ -15,5 +17,7 @@ module.exports = {
     image: true,
     message: true,
     remind: true,
-  }
+  },
+  port: port,
+  db: db,
 };

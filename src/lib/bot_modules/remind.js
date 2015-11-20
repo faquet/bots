@@ -4,9 +4,11 @@ const schedule = require('node-schedule'),
       moment = require('moment'),
       parse = require('../utils').parse;
 
-function Remind(store) {
+const Remind = {
 
-  Remind.init = function(data, send_message) {
+  init: function(){},
+
+  funnel: function(data, send_message) {
     if (data.type === 'message' && parse(data.text, 'remind me')) {
       let reminderData = data.text.match(/(\d+)\s(\w+)(?:\sto\s|\s)["']([^"]*)["']/i);
       if (reminderData && reminderData.length === 4) {
@@ -22,18 +24,15 @@ function Remind(store) {
         });
       }
     }
+  },
 
-  };
-
-  Remind.cleanseUnit = function(unit) {
+  cleanseUnit: function(unit) {
     if (!unit.endsWith('s')) {
       return unit + 's';
     } else {
       return unit;
     }
-  };
-
-  return Remind;
+  },
 
 
 };
