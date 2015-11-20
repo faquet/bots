@@ -12,23 +12,19 @@ const Message = {
     if (data.type === 'message') {
       let text = data.text;
       for (let message of Object.keys(Message.cache)) {
-       // console.log('messagekey>>>>>', message);
-        // console.log('messagecache>>>>>', Message.cache);
-        // console.log('messagevalue>>>>>', Message.cache[message]);
         Message.cache[message](text, send_message);
       } 
     }
   },
 
-  create: function(name, chat_text_to_watch, bot_response) {
+  create: function(watch_text, bot_response) {
     console.log('create');
-    if (Message.cache[name]) { return Message.cache[name]; }
-    Message.cache[name] = function(text, send_message) {
-      if (parse(text, chat_text_to_watch)) {
+    if (Message.cache[watch_text]) { return Message.cache[watch_text]; }
+    Message.cache[watch_text] = function(text, send_message) {
+      if (parse(text, watch_text)) {
         return send_message(bot_response);
       }
     };
-     console.log('messagecache>>>>>', Message.cache);
   },
 
 };

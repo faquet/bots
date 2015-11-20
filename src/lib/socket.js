@@ -27,6 +27,8 @@ function SocketServer(socket, bot) {
         return;
       }
 
+      console.log('message data:', data);
+
     bot.moduleFunnel(dat);
 
   };

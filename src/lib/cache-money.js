@@ -40,6 +40,7 @@ function Bot(params) {
  * Bot prototype.
  */
 
+
   const bot = {};
   const modules = {};
   const publicmyballs = {};
@@ -69,9 +70,18 @@ function Bot(params) {
     this.store = defaults;
     this.token = params.token;
 
-    return new Promise((resolve, reject) => {
-      return resolve(bot.connect());
-    });
+    bot.moduleConfig();
+    bot.loadModules();
+    bot.loadPublicUserMethods();
+
+    // return new Promise((resolve, reject) => {
+    //   return resolve(bot.connect());
+    // });
+    bot.connect();
+
+    console.log('bot', bot);
+
+    return publicmyballs;
 
   };
 
@@ -83,13 +93,10 @@ function Bot(params) {
  */
 
   bot.connect = function connect() {
-    return this.req('rtm.start', this.store)
+    this.req('rtm.start', this.store)
 
       .then((data) => {
         mixin(this, data, false);
-        bot.moduleConfig();
-        bot.loadModules();
-        bot.userMethods();
       })
 
       .then((data) => {
@@ -100,7 +107,6 @@ function Bot(params) {
       .then((data) => {
         this.connected();
         this.emit('start');
-        return publicmyballs;
       })
       .catch((err) => console.log(err));
   };
@@ -214,12 +220,12 @@ function Bot(params) {
 
 
   /**
- * User Methods.
+ * Initiate Public User Methods.
  *
  * @private
  */
 
-  bot.userMethods = function() {
+  bot.loadPublicUserMethods = function() {
     publicmyballs.createMessage = modules.message.create;
   };
 
