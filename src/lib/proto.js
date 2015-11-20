@@ -5,7 +5,7 @@
  * @private
  */
 
-const EventEmitter = require('events').EventEmitter;
+const Events = require('./events');
 const WebSocket = require('ws');
 const mixin = require('merge-descriptors');
 const r = require('request');
@@ -31,10 +31,13 @@ const Bot = exports = module.exports = {
       throw new Error('No token was provided');
     }
 
+    for (let fn in params.methods) {
+      this[fn] = params.methods[fn];
+    }
+    this.triggers = params.triggers;
     this.token = params.token;
     this.icon_url = params.icon_url || 'https://avatars0.githubusercontent.com/u/12116474?v=3&amp;s=200';
-
-    mixin(this, EventEmitter.prototype, false);
+    mixin(this, Events, false);
     this.connect();
   },
 
@@ -64,7 +67,7 @@ const Bot = exports = module.exports = {
       wb.on('close', (data) => this.emit('close', data));
 
       wb.on('message', (data) => {
-        try { this.emit('message', JSON.parse(data)); }
+        try { this.emit('message', this.req(data)); }
         catch (err) { console.log(err); }
       });
 
@@ -97,5 +100,12 @@ const Bot = exports = module.exports = {
         }
       });
     });
-  }
+  },
+  handleResponse: function handleResponse(data) {
+    for (let t in this.triggers) {
+      if (data.text.includes(t)) {
+        this[t]();
+      }
+    }
+  },
 };
