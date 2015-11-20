@@ -42,7 +42,7 @@ function Bot(params) {
 
   const bot = {};
   const modules = {};
-  const pub = {};
+  const publicmyballs = {};
 
 /**
  * Initialize bot configuration.
@@ -87,11 +87,9 @@ function Bot(params) {
 
       .then((data) => {
         mixin(this, data, false);
-        
-    bot.moduleConfig();
-    bot.loadModules();
-    bot.userMethods();
-        // return this;
+        bot.moduleConfig();
+        bot.loadModules();
+        bot.userMethods();
       })
 
       .then((data) => {
@@ -102,7 +100,7 @@ function Bot(params) {
       .then((data) => {
         this.connected();
         this.emit('start');
-        return bot;
+        return publicmyballs;
       })
       .catch((err) => console.log(err));
   };
@@ -117,10 +115,6 @@ function Bot(params) {
 
   bot.connected = function connected() {
     this.on('start', () => {
-      // this.store.methods();
-
-// modules.message.create('yoyo', 'yoyo', 'plickity-plow');
-      
       console.log(`@${this.store.username} is logged in to ${this.team.name}`);
     });
     return this;
@@ -218,8 +212,15 @@ function Bot(params) {
     };
   };
 
+
+  /**
+ * User Methods.
+ *
+ * @private
+ */
+
   bot.userMethods = function() {
-    bot.createMessage = modules.message.create;
+    publicmyballs.createMessage = modules.message.create;
   };
 
 
