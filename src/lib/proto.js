@@ -27,19 +27,17 @@ const Bot = exports = module.exports = {
  */
 
   init: function init(params) {
-    if (!params.token) {
+    if (!params.store.token) {
       throw new Error('No token was provided');
     }
-
-    for (let fn in params.methods) {
-      this[fn] = params.methods[fn];
-    }
-    this.triggers = params.triggers;
-    this.token = params.token;
-    this.username = params.username;
-    this.name = params.name;
-    this.real_name = params.real_name;
-    this.icon_url = params.icon_url || 'https://avatars0.githubusercontent.com/u/12116474?v=3&amp;s=200';
+    const store = params.store;
+    const props = {
+      triggers: params.triggers,
+      methods: params.methods
+    };
+    mixin(this, store);
+    mixin(this, params.methods, false);
+    mixin(this, props, false);
     mixin(this, Events, false);
     this.connect();
   },
@@ -54,9 +52,9 @@ const Bot = exports = module.exports = {
   connect: function connect() {
     this.start()
     .then((data) => {
-      mixin(this, data.self, false);
-      mixin(this, data.team, false);
-      mixin(this, data, false);
+      this.team = data.team;
+      this.id = data.self.id;
+      this.url = data.url;
       return this;
     })
     .catch((err) => console.log(err))
@@ -90,7 +88,6 @@ const Bot = exports = module.exports = {
 
   request: function request(method, params) {
     const url = `https://slack.com/api/${method}?${qs.stringify(params)}`;
-
     return new Promise((resolve, reject) => {
       r(url, (error, response, body) => {
         if (!error && response.statusCode === 200) {
@@ -110,10 +107,10 @@ const Bot = exports = module.exports = {
  */
 
   handleResponse: function handleResponse(data) {
-    for (let t in this.triggers) {
-      if (data.text.includes(t)) {
-        console.log(data);
-        this[t](data);
+    for (let trigger in this.triggers) {
+      if (data.text.includes(trigger)) {
+        this[this.triggers[trigger]](data);
+        console.log(this);
       }
     }
   },
@@ -126,8 +123,4 @@ const Bot = exports = module.exports = {
  * @param {Object} token
  * @public
  */
-
-  postMessage: function postMessage(params) {
-    return this.request('chat.postMessage', params);
-  },
 };

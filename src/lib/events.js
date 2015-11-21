@@ -23,17 +23,22 @@ Events.req = function req(data) {
   const parsed = JSON.parse(data);
   if (parsed.text){
     if (parsed.text.includes(`<@${this.id}>`)) {
+      console.log('yes');
       this.handleResponse(parsed);
     }
   }
 };
 
-Events.start = function() {
+Events.start = function start() {
   this.on('start', () => {
     console.log(`[bot] - @${this.name} connected to ${this.team.name}`)
   });
 
   return this.request('rtm.start', this);
+};
+
+Events.postMessage = function postMessage(params) {
+  return this.request('chat.postMessage', params);
 };
 
 module.exports = Events;
