@@ -32,9 +32,27 @@ Babar.on('start', function() {
   Babar.emit('event', "holy bupkis");
 });
 
+Babar.on('message', function(data) {
+  console.log('whoa dude data: ', data);
+});
 
+Clang.on('user_typing', function() {
+  console.log('Stop that racket, Evan');
+});
 
+Babar.on('bot_mess', function(data) {
+  setTimeout(function() {
+    Babar.postMessage(data.channel, "I don't like your tone, " + data.username);
+  }, 3000);
+});
 
+Clang.on('evan', function(data) {
+  Clang.postMessage(data.channel, "Stop that racket, Evan");
+});
+
+// Babar.on('me', function(data) {
+//   Babar.postMessage(data.channel, "What can I do ya for Anderson?");
+// });
 
 
 // Babar.createMessage('yoyo', 'plickity-plow');
