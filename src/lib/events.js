@@ -24,13 +24,15 @@ Events.mention = function mention(message) {
   const text = data.text;
   const mention = `<@${this.id}> `;
   if (text && text.startsWith(mention)){
-    const command = text.substr(mention.length, text.length).trim();
+    const command = text.substr(mention.length, text.length);
+    const imageMe = 'image me ';
+    const remindMe = 'remind me ';
 
-    if (command.startsWith('image me')) {
-      data.query = command.substr('image me'.length + 1, text.length);
+    if (command.startsWith(imageMe)) {
+      data.query = command.substr(imageMe.length, text.length);
       return this.postImage(data);
-    } else if (command.startsWith('remind me')) {
-        data.query = command.substr('remind me'.length + 1, text.length);
+    } else if (command.startsWith(remindMe)) {
+        data.query = command.substr(remindMe.length, text.length);
         return this.setReminder(data);
     } else {
       for (let event in this.events) {
@@ -40,7 +42,6 @@ Events.mention = function mention(message) {
         }
       }
     }
-
   }
 };
 
