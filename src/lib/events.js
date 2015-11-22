@@ -19,15 +19,28 @@ const Events = {};
 
 _.extend(Events, EventEmitter.prototype);
 
-Events.mention = function mention(data) {
-  const parsed = JSON.parse(data);
-  if (parsed.text && parsed.text.includes(`<@${this.id}>`)){
-    for (let event in this.events) {
-      if (parsed.text.includes(event)) {
-        const method = this.events[event];
-        this[method](parsed);
+Events.mention = function mention(message) {
+  const data = JSON.parse(message);
+  const text = data.text;
+  const mention = `<@${this.id}> `;
+  if (text && text.startsWith(mention)){
+    const command = text.substr(mention.length, text.length).trim();
+
+    if (command.startsWith('image me')) {
+      data.query = command.substr('image me'.length + 1, text.length);
+      return this.postImage(data);
+    } else if (command.startsWith('remind me')) {
+        data.query = command.substr('remind me'.length + 1, text.length);
+        return this.setReminder(data);
+    } else {
+      for (let event in this.events) {
+        if (text.includes(event)) {
+          const method = this.events[event];
+          return this[method](data);
+        }
       }
     }
+
   }
 };
 
@@ -40,6 +53,18 @@ Events.start = function start() {
 };
 
 Events.postMessage = function postMessage(params) {
+  return this.request('chat.postMessage', params);
+};
+
+Events.postImage = function postImage(params) {
+  params.channel = params.channel;
+  params.text = 'Gonna post soon, I swear.';
+  return this.request('chat.postMessage', params);
+};
+
+Events.setReminder = function postImage(params) {
+  params.channel = params.channel;
+  params.text = 'Gonna set reminders soon, I swear.';
   return this.request('chat.postMessage', params);
 };
 
