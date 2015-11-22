@@ -7,6 +7,7 @@
 
 const Events = require('./events');
 const WebSocket = require('ws');
+const _ = require('underscore');
 const mixin = require('merge-descriptors');
 const r = require('request');
 const qs = require('querystring');
@@ -27,17 +28,11 @@ const Bot = exports = module.exports = {
  */
 
   init: function init(params) {
-    if (!params.store.token) {
+    if (!params.token) {
       throw new Error('No token was provided');
     }
-    const store = params.store;
-    const props = {
-      triggers: params.triggers,
-      methods: params.methods
-    };
-    mixin(this, store);
-    mixin(this, params.methods, false);
-    mixin(this, props, false);
+
+    mixin(this, params, false);
     mixin(this, Events, false);
     this.connect();
   },
@@ -52,9 +47,26 @@ const Bot = exports = module.exports = {
   connect: function connect() {
     this.start()
     .then((data) => {
-      this.team = data.team;
-      this.id = data.self.id;
-      this.url = data.url;
+      Object.defineProperties(this, {
+        'id': {
+          value: data.self.id,
+          enumerable: true,
+          writable: true,
+          configurable: true
+        },
+        'url': {
+          value: data.url,
+          enumerable: true,
+          writable: true,
+          configurable: true
+        },
+        'team': {
+          value: data.team,
+          enumerable: true,
+          writable: true,
+          configurable: true
+        }
+      });
       return this;
     })
     .catch((err) => console.log(err))
@@ -67,7 +79,10 @@ const Bot = exports = module.exports = {
       wb.on('close', (data) => this.emit('close', data));
 
       wb.on('message', (data) => {
-        try { this.emit('message', this.req(data)); }
+        try {
+          this.emit('message');
+          this.mention(data);
+        }
         catch (err) { console.log(err); }
       });
     })
@@ -87,7 +102,8 @@ const Bot = exports = module.exports = {
  */
 
   request: function request(method, params) {
-    const url = `https://slack.com/api/${method}?${qs.stringify(params)}`;
+    const url = `https://slack.com/api/${method}?${qs.stringify(this.paramify(params))}`;
+
     return new Promise((resolve, reject) => {
       r(url, (error, response, body) => {
         if (!error && response.statusCode === 200) {
@@ -99,28 +115,18 @@ const Bot = exports = module.exports = {
     });
   },
 
- /**
- * Executes the method associated with the trigger.
+  /**
+ * Put bot attributes in all request params.
  *
- * @param {Object} data
+ * @param {Object} param
  * @private
  */
 
-  handleResponse: function handleResponse(data) {
-    for (let trigger in this.triggers) {
-      if (data.text.includes(trigger)) {
-        this[this.triggers[trigger]](data);
-        console.log(this);
-      }
-    }
+  paramify: function paramify(params) {
+    params.token = this.token;
+    params.name = this.name;
+    params.icon_url = this.icon_url;
+    params.username = this.username;
+    return params;
   },
-
- /**
- * Posts message.
- *
- * @param {Object} channel
- * @param {Object} text
- * @param {Object} token
- * @public
- */
 };
