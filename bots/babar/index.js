@@ -22,17 +22,28 @@ const Clang_Store = {
 };
 const Clang = require('../../src')(Clang_Store);
 
+// console.log('BABAR', Babar);
+
 Babar.createMessage('yoyo', 'plickity-plow');
-Babar.createMessage('funyuns', 'OH DOZ FUNYUNS');
-Babar.createMessage('who wants sum?', 'I do! I want some!');
-
-
-
-Clang.createMessage('facebook', 'face your book');
 Clang.createMessage('clang on', 'PEEEewwww do loo pew pew');
 
-console.log('clang', Clang);
-console.log('Babar', Babar);
+
+Babar.on('start', function() {
+  Babar.emit('event', "holy bupkis");
+});
+
+
+
+
+
+
+// Babar.createMessage('yoyo', 'plickity-plow');
+// Babar.createMessage('funyuns', 'OH DOZ FUNYUNS');
+// Babar.createMessage('who wants sum?', 'I do! I want some!');
+
+// Clang.createMessage('facebook', 'face your book');
+// Clang.createMessage('clang on', 'PEEEewwww do loo pew pew');
+
 
 // Bot.then(function(babar){
 //   console.log('babar', babar);

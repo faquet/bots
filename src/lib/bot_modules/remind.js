@@ -6,7 +6,9 @@ const schedule = require('node-schedule'),
 
 const Remind = {
 
-  init: function(){},
+  init: function(){
+    return this;
+  },
 
   funnel: function(data, send_message) {
     if (data.type === 'message' && parse(data.text, 'remind me')) {

@@ -17,6 +17,7 @@ const mixin = require('merge-descriptors');
 const request = require('request');
 const qs = require('querystring');
 const Socket = require('./socket');
+const _ = require('underscore');
 // const BM = require('./bot_modules/index');
 
 
@@ -26,7 +27,7 @@ exports = module.exports = Bot;
 /**
  * Bot factory.
  *
- * @param {String} token
+ * @param {object} token
  * @return {bot}
  * @public
  */
@@ -40,8 +41,10 @@ function Bot(params) {
  * Bot prototype.
  */
 
-
-  const bot = {};
+  const bot = {
+    modules: {},
+    pub: {}
+  };
   const modules = {};
   const publicmyballs = {};
 
@@ -71,17 +74,20 @@ function Bot(params) {
     this.token = params.token;
 
     bot.moduleConfig();
-    bot.loadModules();
+    // bot.loadModules();
     bot.loadPublicUserMethods();
 
     // return new Promise((resolve, reject) => {
-    //   return resolve(bot.connect());
-    // });
+      // return resolve(bot.connect());
+    // });  
     bot.connect();
 
-    console.log('bot', bot);
+    // console.log('bot modules message', modules.message.init());
+    // console.log('-------------------------');
+    // console.log('bot>>>>>>', bot);
+    // console.log('-------------------------');
 
-    return publicmyballs;
+    return bot;
 
   };
 
@@ -122,6 +128,9 @@ function Bot(params) {
   bot.connected = function connected() {
     this.on('start', () => {
       console.log(`@${this.store.username} is logged in to ${this.team.name}`);
+    });
+    this.on('event', (data) => {
+      console.log('That tickles!' + data);
     });
     return this;
   };
@@ -183,8 +192,23 @@ function Bot(params) {
       let Module = require("./bot_modules/" + file);
       let module_name = file.slice(0, -3);
       if (bot.store.modules[module_name]) {
-        modules[module_name] = Module;
+        this.modules[module_name] = { cache: {}};
+        mixin(this.modules[module_name], Module, false);
+        // modules[module_name] = Module;
+        // bot.modules[module_name] = {};
+
+        // let mod = Module.init(bot.store);
+        // console.log('Module: ', Module);
+        // console.log('mod: ', mod);
+        // var newObj = JSON.parse( JSON.stringify( mod ) );
+        // console.log('newObj', newObj);
+
+        // bot.modules[module_name] = Object.create(mod);
+        // console.log('obj create', Object.create(Module));
+        // modules[module_name] = Object.create(Module);
+
       }
+        // console.log('modules', bot.modules);
     });
   };
 
@@ -194,13 +218,13 @@ function Bot(params) {
  * @private
  */
 
- bot.loadModules = function() {
-    for (let mod of Object.keys(modules)) {
-      if (modules[mod]) {
-        modules[mod].init(bot.store);
-      }
-    }
-  };
+ // bot.loadModules = function() {
+ //    for (let mod of Object.keys(modules)) {
+ //      if (modules[mod]) {
+ //        modules[mod].init(bot.store);
+ //      }
+ //    }
+ //  };
 
 
   /**
@@ -210,9 +234,9 @@ function Bot(params) {
  */
 
   bot.moduleFunnel = function(data) {
-    for (let mod of Object.keys(modules)) {
-      modules[mod].funnel(data, (message) => {
-        console.log('message', message);
+    for (let mod of Object.keys(bot.modules)) {
+      bot.modules[mod].funnel(data, (message) => {
+        // console.log('message', message);
         return bot.postMessage(data.channel, message, bot.store);
       });
     };
@@ -226,7 +250,9 @@ function Bot(params) {
  */
 
   bot.loadPublicUserMethods = function() {
-    publicmyballs.createMessage = modules.message.create;
+    bot.createMessage = function(watch_text, bot_response) {
+      return this.modules.message.create(watch_text, bot_response);
+    };
   };
 
 

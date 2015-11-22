@@ -15,6 +15,7 @@ const Image = {
     this.googleCseId = params.googleCseId;
     this.googleApiKey = params.googleApiKey;
 
+    return this;
   },
 
   funnel: function(data, send_message) {
