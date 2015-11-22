@@ -83,7 +83,9 @@ const Bot = exports = module.exports = {
           this.emit('message');
           this.mention(data);
         }
-        catch (err) { console.log(err); }
+        catch (err) {
+          console.log(err);
+        }
       });
     })
 
@@ -127,6 +129,7 @@ const Bot = exports = module.exports = {
     params.name = this.name;
     params.icon_url = this.icon_url;
     params.username = this.username;
+    params.real_name = this.real_name;
     return params;
   },
 };

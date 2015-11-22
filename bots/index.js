@@ -8,6 +8,9 @@ const bots = [
   },{
     name: 'babar',
     active: false
+  },{
+    name: 'borf',
+    active: true
   }
 ];
 

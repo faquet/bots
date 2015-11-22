@@ -7,7 +7,6 @@
 const EventEmitter = require('events').EventEmitter;
 const _ = require('underscore');
 const Backbone = require('backbone');
-const mixin = require('merge-descriptors');
 
 /**
  * Initialize a new `Router` with the given `options`.
