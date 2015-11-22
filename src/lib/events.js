@@ -6,7 +6,6 @@
 
 const EventEmitter = require('events').EventEmitter;
 const _ = require('underscore');
-const Backbone = require('backbone');
 
 /**
  * Initialize a new `Router` with the given `options`.
@@ -18,7 +17,6 @@ const Backbone = require('backbone');
 
 const Events = {};
 
-_.extend(Events, Backbone.Events);
 _.extend(Events, EventEmitter.prototype);
 
 Events.mention = function mention(data) {
