@@ -46,10 +46,11 @@ Events.mention = function mention(message) {
 };
 
 Events.start = function start() {
-  this.on('start', () => {
-    console.log(`[bot] - @${this.name} connected to ${this.team.name}`);
-  });
-
+  if (this.onStart) {
+    this.on('start', () => console.log(`[bot] ${this.onStart}`));
+  } else {
+    this.on('start', () => console.log(`[bot] @${this.username} connected to ${this.team.name}.slack`));
+  }
   return this.request('rtm.start', this);
 };
 
