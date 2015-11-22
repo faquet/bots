@@ -1,4 +1,4 @@
-var store = require('./store'),
+var store = require('./babar_store'),
     mongoose = require('mongoose');
 
 module.exports = function() {

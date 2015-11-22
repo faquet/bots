@@ -1,6 +1,8 @@
 'use strict';
 
-const parse = require('../utils').parse;
+const parse = (text, key) => {
+  return text.toLowerCase().includes(key.toLowerCase());
+};
 
 const Message = module.exports = function(){};
 
@@ -10,11 +12,9 @@ const Message = module.exports = function(){};
   };
 
   Message.funnel = function(data, send_message) {
-    if (data.type === 'message') {
-      let text = data.text;
-      for (let message of Object.keys(this.cache)) {
-        this.cache[message](text, send_message);
-      }
+    let text = data.text;
+    for (let message of Object.keys(this.cache)) {
+      this.cache[message](text, send_message);
     }
   };
 

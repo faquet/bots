@@ -2,18 +2,29 @@
 
 const request = require('request'),
     _ = require('underscore'),
-    store = require('../config/store'),
-    qs = require('querystring'),
-    parse = require('../config/utils').parse;
+    qs = require('querystring');
 
-const ImageMe = {
 
-  search(data, send_message) {
+const parse = (text, key) => {
+  return text.toLowerCase().includes(key.toLowerCase());
+};
 
-    if (data.type === 'message' && 
-        parse(data.text, 'image me') && 
-        store.googleCseId && 
-        store.googleApiKey) {
+const Image = {
+
+  init: function(params) {
+    if (!params.googleCseId || !params.googleApiKey) { 
+      throw new Error('please provide google keys');
+    }
+
+    this.googleCseId = params.googleCseId;
+    this.googleApiKey = params.googleApiKey;
+
+    return this;
+  },
+
+  funnel: function(data, send_message) {
+
+    if (parse(data.text, 'image me')) {
 
       let searchCriteria = data.text.match(/(image me)? (.*)/i).pop();
 
@@ -22,8 +33,8 @@ const ImageMe = {
         searchType:'image',
         safe:'high',
         fields:'items(link)',
-        cx: store.googleCseId,
-        key: store.googleApiKey
+        cx: this.googleCseId,
+        key: this.googleApiKey
       };
 
       let uri = 'https://www.googleapis.com/customsearch/v1';
@@ -41,13 +52,11 @@ const ImageMe = {
           return console.log('request error: ', err);
         }
       };
-
       request({qs: query, uri: uri, method: 'GET'}, google_callback);
-
     }
   }
 
 
 };
 
-module.exports = ImageMe;
+module.exports = Image;

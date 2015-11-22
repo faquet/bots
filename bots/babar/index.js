@@ -1,71 +1,69 @@
 
-// 'use strict';
-
-// const store = require('./config/store'),
-//       Bot = require('./config/bot');
-
-
-// Bot(store);
-
-
 'use strict';
 
-const Babar_Store = require('./config/store');
+const Babar_Store = require('./config/babar_store');
 const Babar = require('../../src')(Babar_Store);
 
-const Clang_Store = {
-  token      : process.env.CLANG_KEY,
-  name       : 'clang',
-  username   : 'clang',
-  real_name  : '__clang__',
-  icon_url   : 'http://geekdad.com/images_blogs/photos/uncategorized/2007/06/08/cb2.jpg'
-};
+const Clang_Store = require('./config/clang_store');
 const Clang = require('../../src')(Clang_Store);
 
-// console.log('BABAR', Babar);
 
 Babar.createMessage('yoyo', 'plickity-plow');
 Clang.createMessage('clang on', 'PEEEewwww do loo pew pew');
 
 
-Babar.on('start', function() {
+Babar
+
+.on('start', () => {
   Babar.emit('event', "holy bupkis");
-});
-
-Babar.on('message', function(data) {
-  console.log('whoa dude data: ', data);
-});
-
-Clang.on('user_typing', function() {
-  console.log('Stop that racket, Evan');
-});
-
-Babar.on('bot_mess', function(data) {
-  setTimeout(function() {
+})
+.on('bot_mess', (data) => {
+  setTimeout(() => {
     Babar.postMessage(data.channel, "I don't like your tone, " + data.username);
   }, 3000);
+})
+.on('message', (data) => {
+
+    if (data.subtype === 'bot_message') {
+      Babar.emit('bot_mess', data);
+    }
+
+    if (data.user === 'U0D1VC894') {
+      Clang.emit('annoy evan', data);
+    }
+
+    if (data.user === 'U0D1VGD0W' && 10 === Math.floor((Math.random() * 10) + 1)) {
+      Babar.emit('me', data);
+    }
+
+    console.log('whoa dude data: ', data);
+})
+.on('me', (data) => {
+  compliments = [
+    `You're the bees vagina, ${data.user}`,
+    `You quack like a duck better than anyone I know, ${data.user}`,
+    `You make Steve Harvey look like Steve Harvey, ${data.user}`,
+    `Can't image what life on this planet would be without you, ${data.user}. 
+    A cold desert wasteland, remote, desolate, barren . . . just like you 
+    deep down! Isn't that neat!`,
+    `We should really get some fish in chups, ${data.user}.`
+  ],
+  Babar.postMessage(
+    data.channel, 
+    complements[Math.floor((Math.random() * complements.length) - 1)]
+  );
 });
 
-Clang.on('evan', function(data) {
+
+
+
+Clang
+
+.on('user_typing', () => {
+  console.log('Stop that racket, Evan');
+})
+.on('annoy evan', (data) => {
   Clang.postMessage(data.channel, "Stop that racket, Evan");
 });
 
-// Babar.on('me', function(data) {
-//   Babar.postMessage(data.channel, "What can I do ya for Anderson?");
-// });
-
-
-// Babar.createMessage('yoyo', 'plickity-plow');
-// Babar.createMessage('funyuns', 'OH DOZ FUNYUNS');
-// Babar.createMessage('who wants sum?', 'I do! I want some!');
-
-// Clang.createMessage('facebook', 'face your book');
-// Clang.createMessage('clang on', 'PEEEewwww do loo pew pew');
-
-
-// Bot.then(function(babar){
-//   console.log('babar', babar);
-//   babar.createMessage('yoyo', 'yoyo', 'plickity-plow');
-//   babar.createMessage('funyuns', 'funyuns', 'OH DOZ FUNYUNS');
-// });
 

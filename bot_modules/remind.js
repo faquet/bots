@@ -1,15 +1,22 @@
 'use strict';
 
 const schedule = require('node-schedule'),
-      moment = require('moment'),
-      parse = require('../config/utils').parse;
+      moment = require('moment');
 
-const RemindMe = {
+const parse = (text, key) => {
+  return text.toLowerCase().includes(key.toLowerCase());
+};
 
-  create(data, send_message) {
-    if (data.type === 'message' && parse(data.text, 'remind me')) {
-      let reminderData = data.text.match(/(\d+)\s(\w+)(?:\sto\s|\s)"([^"]*)"/i);
-      if (reminderData.length === 4) {
+const Remind = {
+
+  init: function(){
+    return this;
+  },
+
+  funnel: function(data, send_message) {
+    if (parse(data.text, 'remind me')) {
+      let reminderData = data.text.match(/(\d+)\s(\w+)(?:\sto\s|\s)["']([^"]*)["']/i);
+      if (reminderData && reminderData.length === 4) {
         this.duration = reminderData[1];
         this.unit = reminderData[2];
         this.message = reminderData[3];
@@ -22,10 +29,9 @@ const RemindMe = {
         });
       }
     }
-
   },
 
-  cleanseUnit(unit) {
+  cleanseUnit: function(unit) {
     if (!unit.endsWith('s')) {
       return unit + 's';
     } else {
@@ -37,7 +43,7 @@ const RemindMe = {
 };
 
 
-module.exports = RemindMe;
+module.exports = Remind;
 
 
 

@@ -1,6 +1,6 @@
 /*!
- * cache-money
- * Copyright(c) 2015 Evan "Chef Boyardeez Nuts" Turner
+ * Wo lo looooooo
+ * Copyright(c) 2015 ßvæn "Quail Man" Yµrnær
  * MIT Licensed
  */
 
@@ -12,13 +12,10 @@
  */
 
 const EventEmitter = require('events').EventEmitter;
-const WebSocket = require('ws');
-const mixin = require('merge-descriptors');
 const request = require('request');
 const qs = require('querystring');
 const Socket = require('./socket');
 const _ = require('underscore');
-// const BM = require('./bot_modules/index');
 
 
 
@@ -43,10 +40,7 @@ function Bot(params) {
 
   const bot = {
     modules: {},
-    pub: {}
   };
-  const modules = {};
-  const publicmyballs = {};
 
 /**
  * Initialize bot configuration.
@@ -67,25 +61,16 @@ function Bot(params) {
       }
     };
 
-    mixin(this, EventEmitter.prototype, false);
-    mixin(defaults, params);
+    _.extend(this, EventEmitter.prototype);
+    _.extend(defaults, params);
 
     this.store = defaults;
     this.token = params.token;
 
     bot.moduleConfig();
-    // bot.loadModules();
     bot.loadPublicUserMethods();
 
-    // return new Promise((resolve, reject) => {
-      // return resolve(bot.connect());
-    // });  
     bot.connect();
-
-    // console.log('bot modules message', modules.message.init());
-    // console.log('-------------------------');
-    // console.log('bot>>>>>>', bot);
-    // console.log('-------------------------');
 
     return bot;
 
@@ -102,37 +87,14 @@ function Bot(params) {
     this.req('rtm.start', this.store)
 
       .then((data) => {
-        mixin(this, data, false);
+        _.extend(this, data);
       })
 
       .then((data) => {
-        const wb = new WebSocket(this.url);
-        const SocketServer = Socket(wb, this);
+        const SocketServer = Socket(this);
       })
 
-      .then((data) => {
-        this.connected();
-        this.emit('start');
-      })
       .catch((err) => console.log(err));
-  };
-
-/**
- * Callback when connection is established.
- *
- * @public
- */
-
-
-
-  bot.connected = function connected() {
-    this.on('start', () => {
-      console.log(`@${this.store.username} is logged in to ${this.team.name}`);
-    });
-    this.on('event', (data) => {
-      console.log('That tickles!' + data);
-    });
-    return this;
   };
 
 
@@ -171,7 +133,7 @@ function Bot(params) {
  */
 
   bot.postMessage = function(id, text) {
-    const params =  mixin({
+    const params =  _.extend({
       text: text,
       channel: id,
     }, this.store);
@@ -187,44 +149,17 @@ function Bot(params) {
  */
 
  bot.moduleConfig = function() {
-    const path = require("path").join(__dirname, "bot_modules");
+  const path = require("path").resolve("bot_modules");
     require("fs").readdirSync(path).forEach((file) => {
-      let Module = require("./bot_modules/" + file);
+      let Module = require(path + "/" + file);
       let module_name = file.slice(0, -3);
       if (bot.store.modules[module_name]) {
+        let mod = Module.init(bot.store);
         this.modules[module_name] = { cache: {}};
-        mixin(this.modules[module_name], Module, false);
-        // modules[module_name] = Module;
-        // bot.modules[module_name] = {};
-
-        // let mod = Module.init(bot.store);
-        // console.log('Module: ', Module);
-        // console.log('mod: ', mod);
-        // var newObj = JSON.parse( JSON.stringify( mod ) );
-        // console.log('newObj', newObj);
-
-        // bot.modules[module_name] = Object.create(mod);
-        // console.log('obj create', Object.create(Module));
-        // modules[module_name] = Object.create(Module);
-
+        _.extend(this.modules[module_name], mod);
       }
-        // console.log('modules', bot.modules);
     });
   };
-
-  /**
- * Load Bot Modules.
- *
- * @private
- */
-
- // bot.loadModules = function() {
- //    for (let mod of Object.keys(modules)) {
- //      if (modules[mod]) {
- //        modules[mod].init(bot.store);
- //      }
- //    }
- //  };
 
 
   /**
@@ -235,8 +170,8 @@ function Bot(params) {
 
   bot.moduleFunnel = function(data) {
     for (let mod of Object.keys(bot.modules)) {
+      console.log(bot.modules[mod]);
       bot.modules[mod].funnel(data, (message) => {
-        // console.log('message', message);
         return bot.postMessage(data.channel, message, bot.store);
       });
     };

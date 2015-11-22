@@ -1,11 +1,20 @@
 'use strict';
 
 const Message = require('mongoose').model('Message');
-const parse = require('../config/utils').parse;
+
+const parse = (text, key) => {
+  return text.toLowerCase().includes(key.toLowerCase());
+};
+
 
 const MessageKeeper = {
 
-  saveMessage(data, cb) {
+  init() {
+    console.log('<<messagekeeper init>>,');
+    return this;
+  },
+
+  funnel(data, cb) {
     this.regulate(data, () => {
       const text = this.sanitize(data.text);
       const messageConfig = {
@@ -22,7 +31,8 @@ const MessageKeeper = {
   regulate(data, cb){
     if ( 
       data.type === 'message' &&
-      !parse(data.text, 'remind me')
+      !parse(data.text, 'remind me') &&
+      !parse(data.text, 'image me')
     ) {
       cb();
     }

@@ -1,8 +1,10 @@
 'use strict';
 
-const parse = require('./utils').parse;
+const WebSocket = require('ws');
 
-function SocketServer(socket, bot) {
+function SocketServer(bot) {
+
+  const socket = new WebSocket(bot.url);
 
   const BM = bot.store.modules;
 
@@ -20,9 +22,6 @@ function SocketServer(socket, bot) {
 
   const Message = (data) => {
     const dat = JSON.parse(data);
-
-    bot.emit('message', dat);
-
     if ( 
       dat.username === bot.store.name || 
       dat.message ||
@@ -30,30 +29,15 @@ function SocketServer(socket, bot) {
       ){
         return;
       }
-
-    if (dat.subtype === 'bot_message') {
-      bot.emit('bot_mess', dat);
-    }
-
-    if (dat.user === 'U0D1VC894') {
-      bot.emit('evan', dat);
-    }
-
-    if (dat.user === 'U0D1VGD0W') {
-      bot.emit('me', dat);
-    }
-    
-
-    console.log('message data:', data);
-
+    console.log('message data:', dat);
+    bot.emit('message', dat);
     bot.moduleFunnel(dat);
-
   };
 
   const UserTyping = (data) => {
     const dat = JSON.parse(data);
     console.log('dudududud');
-    // bot.emit('user_typing', dat);
+    bot.emit('user_typing', dat);
   };
 
   socket.on('open', Open);

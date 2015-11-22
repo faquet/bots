@@ -17,6 +17,8 @@ module.exports = {
     image: true,
     message: true,
     remind: true,
+    markov: true,
+    messageKeeper: true,
   },
   port: port,
   db: db,
