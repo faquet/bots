@@ -1,7 +1,52 @@
 'use strict';
-const utils = require('./utils');
 
-module.exports = class MarkovChain {
+const Message = require('mongoose').model('Message');
+
+
+
+
+const parse = (text, key) => {
+  return text.toLowerCase().includes(key.toLowerCase());
+};
+
+const random = (array) => {
+  return array[Math.floor(Math.random() * array.length)];
+};
+
+
+const capitalize = (wordList) => {
+  let tmpList = Object.keys(wordList).filter((word) => {
+    return word[0] >= 'A' && word[0] <= 'Z';
+  });
+  return tmpList[~~(Math.random() * tmpList.length)];
+};
+
+const ofType = (file) => {
+  return file.indexOf('.' + path.sep) === 0 || file.indexOf(path.sep) === 0;
+};
+
+const select = (obj) => {
+  let keys = Object.keys(obj);
+  let sum = keys.reduce((p, c) => p + obj[c], 0);
+
+  if (!Number.isFinite(sum)) {
+    throw new Error('All values in object must be a numeric value');
+  }
+
+  let selection = ~~(Math.random() * sum);
+
+  for (let i = 0, count = 0; i < keys.length; i++) {
+    count += obj[keys[i]];
+    if (count > selection) {
+      return keys[i];
+    }
+  }
+};
+
+
+
+
+class MarkovChain {
   constructor(args) {
     if (!args) {
       args = {};
@@ -62,7 +107,7 @@ module.exports = class MarkovChain {
       this.sentence = curWord;
 
       while (this.bank[curWord] && !this.endFn()) {
-        curWord = utils.select(this.bank[curWord]);
+        curWord = select(this.bank[curWord]);
         this.sentence += ' ' + curWord;
       }
       callback(null, this.sentence.trim());
@@ -134,3 +179,78 @@ module.exports = class MarkovChain {
     return word.replace(/\.$/ig, '');
   }
 };
+
+
+
+
+const MarkovMe = {
+
+  init() {
+        console.log('<<markov init>>,');
+    return this;
+  },
+
+  getMessageHistory() {
+    return new Promise((resolve, reject) => {
+      Message.find({}, function(err, docs) {
+        const messages = docs.map((doc) => {
+          return doc.message;
+        });
+        resolve(this.toStr(messages));
+      }.bind(this));
+    });
+  },
+
+  funnel(data, send_message) {
+    console.log('markov funnel');
+    if (parse(data.text, 'babar')) {
+      let word = this.pickWord(data.text);
+      this.getMessageHistory().then((messages)=> {
+        console.log('messages', messages);
+        new MarkovChain({text: messages})
+          .start(word)
+          .end()
+          .runProcess((err, sentence) => {
+            console.log('sentence', sentence);
+            send_message(this.sanitizeSentence(sentence));
+            return;
+          }).bind(this);
+      });
+    }
+  },
+
+  pickWord(text) {
+    return random(this.toArr(text));
+
+  },
+
+  sanitizeSentence(sentence) {
+    let capitalized = this.capitalizeFirstLetter(sentence);
+    let punctuated = this.punctuateSentenceEnd(capitalized);
+    return punctuated;
+  },
+
+  toStr(messages) {
+    return messages.join(' ').replace(/"/g, "");
+  },
+
+  toArr(text) {
+    return text.match(/('\w+)|(\w+'\w+)|(\w+')|(\w+)/ig);
+  },
+
+  capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  },
+
+  punctuateSentenceEnd(string) {
+    if (string.slice(-1).match(/[.,!?]/g) === null) {
+      return string + random(['.', '.', '.', '.', '?']);
+    } else {
+      return string;
+    }
+  },
+
+
+};
+
+module.exports = MarkovMe;

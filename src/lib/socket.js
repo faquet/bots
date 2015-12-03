@@ -1,24 +1,27 @@
 'use strict';
 
-const parse = require('./utils').parse;
+const WebSocket = require('ws');
 
-function SocketServer(socket, bot) {
+function SocketServer(bot) {
+
+  const socket = new WebSocket(bot.url);
 
   const BM = bot.store.modules;
 
   const Open = () => {
+    bot.emit('open');
     console.log(`A motherfucka is connected . . . to ${bot.team.name}.\n
       ${bot.store.name} can\'t feel his legs`
     );
   };
 
   const Close = () => {
+    bot.emit('close');
     console.log('he gone.');
   };
 
   const Message = (data) => {
     const dat = JSON.parse(data);
-
     if ( 
       dat.username === bot.store.name || 
       dat.message ||
@@ -26,16 +29,15 @@ function SocketServer(socket, bot) {
       ){
         return;
       }
+    console.log('message data:', dat);
+    bot.emit('message', dat);
+    bot.moduleFunnel(dat);
+  };
 
-    for (let bot_module of Object.keys(BM)) {
-      if (BM[bot_module]) {
-        BM[bot_module](bot.store).init(dat, (message) => {
-          console.log('message', message);
-          return bot.postMessage(dat.channel, message, bot.store);
-        });
-      }
-    };
-
+  const UserTyping = (data) => {
+    const dat = JSON.parse(data);
+    console.log('dudududud');
+    bot.emit('user_typing', dat);
   };
 
   socket.on('open', Open);
@@ -43,6 +45,8 @@ function SocketServer(socket, bot) {
   socket.on('close', Close);
 
   socket.on('message', Message);
+
+  socket.on('user_typing', UserTyping);
 
 };
 

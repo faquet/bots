@@ -1,6 +1,6 @@
 /*!
- * cache-money
- * Copyright(c) 2015 Evan "Chef Boyardeez Nuts" Turner
+ * Wo lo looooooo
+ * Copyright(c) 2015 ßvæn "Quail Man" Yµrnær
  * MIT Licensed
  */
 
@@ -12,12 +12,10 @@
  */
 
 const EventEmitter = require('events').EventEmitter;
-const WebSocket = require('ws');
-const mixin = require('merge-descriptors');
 const request = require('request');
 const qs = require('querystring');
 const Socket = require('./socket');
-// const BM = require('./bot_modules/index');
+const _ = require('underscore');
 
 
 
@@ -26,7 +24,7 @@ exports = module.exports = Bot;
 /**
  * Bot factory.
  *
- * @param {String} token
+ * @param {object} token
  * @return {bot}
  * @public
  */
@@ -40,7 +38,9 @@ function Bot(params) {
  * Bot prototype.
  */
 
-  const bot = {};
+  const bot = {
+    modules: {},
+  };
 
 /**
  * Initialize bot configuration.
@@ -61,14 +61,19 @@ function Bot(params) {
       }
     };
 
-    mixin(this, EventEmitter.prototype, false);
-    mixin(defaults, params);
+    _.extend(this, EventEmitter.prototype);
+    _.extend(defaults, params);
 
     this.store = defaults;
     this.token = params.token;
 
-    this.moduleConfig();
-    this.connect();
+    bot.moduleConfig();
+    bot.loadPublicUserMethods();
+
+    bot.connect();
+
+    return bot;
+
   };
 
 /**
@@ -82,36 +87,15 @@ function Bot(params) {
     this.req('rtm.start', this.store)
 
       .then((data) => {
-        mixin(this, data, false);
-        return this;
+        _.extend(this, data);
       })
 
       .then((data) => {
-        const wb = new WebSocket(this.url);
-        const SocketServer = Socket(wb, this);
+        const SocketServer = Socket(this);
       })
 
-      .then((data) => {
-        // this.connected();
-        // return this.emit('start');
-      })
       .catch((err) => console.log(err));
   };
-
-/**
- * Callback when connection is established.
- *
- * @public
- */
-
-
-
-  // bot.connected = function connected() {
-  //   this.on('start', () => {
-  //     console.log(`@${this.store.username} is logged in to ${this.team.name}`);
-  //   });
-  //   return this;
-  // };
 
 
 
@@ -149,7 +133,7 @@ function Bot(params) {
  */
 
   bot.postMessage = function(id, text) {
-    const params =  mixin({
+    const params =  _.extend({
       text: text,
       channel: id,
     }, this.store);
@@ -165,23 +149,49 @@ function Bot(params) {
  */
 
  bot.moduleConfig = function() {
-    const path = require("path").join(__dirname, "bot_modules");
+  const path = require("path").resolve("src/bot_modules");
     require("fs").readdirSync(path).forEach((file) => {
-      let Module = require("./bot_modules/" + file);
+      let Module = require(path + "/" + file);
       let module_name = file.slice(0, -3);
       if (bot.store.modules[module_name]) {
-        bot.store.modules[module_name] = Module;
+        let mod = Module.init(bot.store);
+        this.modules[module_name] = { cache: {}};
+        _.extend(this.modules[module_name], mod);
       }
     });
   };
 
 
+  /**
+ * Funnel Slack Messages Through Bot Modules.
+ *
+ * @private
+ */
+
+  bot.moduleFunnel = function(data) {
+    for (let mod of Object.keys(bot.modules)) {
+      console.log(bot.modules[mod]);
+      bot.modules[mod].funnel(data, (message) => {
+        return bot.postMessage(data.channel, message, bot.store);
+      });
+    };
+  };
+
+
+  /**
+ * Initiate Public User Methods.
+ *
+ * @private
+ */
+
+  bot.loadPublicUserMethods = function() {
+    bot.createMessage = function(watch_text, bot_response) {
+      return this.modules.message.create(watch_text, bot_response);
+    };
+  };
 
 
 
+  return bot.defaultConfiguration();
 
-
-  bot.defaultConfiguration();
-
-  return bot;
 };

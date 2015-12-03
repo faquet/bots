@@ -1,13 +1,20 @@
 'use strict';
 
 const schedule = require('node-schedule'),
-      moment = require('moment'),
-      parse = require('../utils').parse;
+      moment = require('moment');
 
-function Remind(store) {
+const parse = (text, key) => {
+  return text.toLowerCase().includes(key.toLowerCase());
+};
 
-  Remind.init = function(data, send_message) {
-    if (data.type === 'message' && parse(data.text, 'remind me')) {
+const Remind = {
+
+  init: function(){
+    return this;
+  },
+
+  funnel: function(data, send_message) {
+    if (parse(data.text, 'remind me')) {
       let reminderData = data.text.match(/(\d+)\s(\w+)(?:\sto\s|\s)["']([^"]*)["']/i);
       if (reminderData && reminderData.length === 4) {
         this.duration = reminderData[1];
@@ -22,18 +29,15 @@ function Remind(store) {
         });
       }
     }
+  },
 
-  };
-
-  Remind.cleanseUnit = function(unit) {
+  cleanseUnit: function(unit) {
     if (!unit.endsWith('s')) {
       return unit + 's';
     } else {
       return unit;
     }
-  };
-
-  return Remind;
+  },
 
 
 };
