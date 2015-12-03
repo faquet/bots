@@ -4,12 +4,12 @@
 const Babar_Store = require('./config/babar_store');
 const Babar = require('../../src')(Babar_Store);
 
-const Clang_Store = require('./config/clang_store');
-const Clang = require('../../src')(Clang_Store);
+const Pancakes_Store = require('./config/pancakes_store');
+const Pancakes = require('../../src')(Pancakes_Store);
 
 
 Babar.createMessage('yoyo', 'plickity-plow');
-Clang.createMessage('clang on', 'PEEEewwww do loo pew pew');
+Pancakes.createMessage('pancakes ready', 'oh boy oh boy oh boy');
 
 
 Babar
@@ -28,9 +28,9 @@ Babar
       Babar.emit('bot_mess', data);
     }
 
-    if (data.user === 'U0D1VC894') {
-      Clang.emit('annoy evan', data);
-    }
+    // if (data.user === 'U0D1VC894') {
+    //   Clang.emit('annoy evan', data);
+    // }
 
     if (data.user === 'U0D1VGD0W' && 10 === Math.floor((Math.random() * 10) + 1)) {
       Babar.emit('me', data);
@@ -39,7 +39,7 @@ Babar
     console.log('whoa dude data: ', data);
 })
 .on('me', (data) => {
-  compliments = [
+  const compliments = [
     `You're the bees vagina, ${data.user}`,
     `You quack like a duck better than anyone I know, ${data.user}`,
     `You make Steve Harvey look like Steve Harvey, ${data.user}`,
@@ -47,23 +47,23 @@ Babar
     A cold desert wasteland, remote, desolate, barren . . . just like you 
     deep down! Isn't that neat!`,
     `We should really get some fish in chups, ${data.user}.`
-  ],
+  ];
   Babar.postMessage(
     data.channel, 
-    complements[Math.floor((Math.random() * complements.length) - 1)]
+    compliments[Math.floor((Math.random() * complements.length) - 1)]
   );
 });
 
 
 
 
-Clang
+// Clang
 
-.on('user_typing', () => {
-  console.log('Stop that racket, Evan');
-})
-.on('annoy evan', (data) => {
-  Clang.postMessage(data.channel, "Stop that racket, Evan");
-});
+// .on('user_typing', () => {
+//   console.log('Stop that racket, Evan');
+// })
+// .on('annoy evan', (data) => {
+//   Clang.postMessage(data.channel, "Stop that racket, Evan");
+// });
 
 

@@ -149,7 +149,7 @@ function Bot(params) {
  */
 
  bot.moduleConfig = function() {
-  const path = require("path").resolve("bot_modules");
+  const path = require("path").resolve("src/bot_modules");
     require("fs").readdirSync(path).forEach((file) => {
       let Module = require(path + "/" + file);
       let module_name = file.slice(0, -3);
