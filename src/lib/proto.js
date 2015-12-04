@@ -29,7 +29,8 @@ const Bot = exports = module.exports = {
 
   init: function init(params) {
     if (!params.token) {
-      throw new Error('No token was provided');
+      console.log(params);
+      throw new Error('No token was provided', params);
     }
 
     mixin(this, params, false);

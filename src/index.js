@@ -1,4 +1,8 @@
 'use strict';
+module.exports.credentials = {
+  googleCseId: process.env.BOT_GOOGLE_IMAGE_SEARCH_ID,
+  googleApiKey: process.env.BOT_GOOGLE_IMAGE_SEARCH_SERVER_KEY,
+};
 
-module.exports = require('./lib/bot');
-module.exports = require('./lib/wololo');
+module.exports.turn = require('./lib/bot');
+module.exports.hold = require('./lib/wololo');

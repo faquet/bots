@@ -11,13 +11,20 @@ const bots = [
   },{
     name: 'borf',
     active: true
+  },{
+    name: 'johnny-pancakes',
+    active: false
   }
 ];
 
 module.exports = () => {
   for (let bot of bots) {
     if (bot.active) {
-      Bot(require(`./${bot.name}`));
+      if (bot.name === 'babar') {
+        Bot.turn(require(`./${bot.name}/config/babar_store`));
+      } else {
+        Bot.turn(require(`./${bot.name}`));
+      }
     }
   }
 };

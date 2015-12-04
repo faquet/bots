@@ -2,7 +2,9 @@
 
 const request = require('request'),
     _ = require('underscore'),
-    qs = require('querystring');
+    qs = require('querystring'),
+    app = require('../index'),
+    credentials = app.credentials;
 
 
 const parse = (text, key) => {
@@ -12,12 +14,15 @@ const parse = (text, key) => {
 const Image = {
 
   init: function(params) {
-    if (!params.googleCseId || !params.googleApiKey) { 
+    if (params.googleCseId && params.googleApiKey) {
+      this.googleCseId = params.googleCseId;
+      this.googleApiKey = params.googleApiKey;
+    } else if (credentials) {
+      this.googleCseId = credentials.googleCseId;
+      this.googleApiKey = credentials.googleApiKey;
+    } else {
       throw new Error('please provide google keys');
     }
-
-    this.googleCseId = params.googleCseId;
-    this.googleApiKey = params.googleApiKey;
 
     return this;
   },

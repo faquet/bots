@@ -1,11 +1,12 @@
 'use strict';
 
 const Babar_Store = require('./config/babar_store');
-const Babar = require('../../src')(Babar_Store);
+const Babar = require('../../src').hold(Babar_Store);
 
 const Pancakes_Store = require('./config/pancakes_store');
-const Pancakes = require('../../src')(Pancakes_Store);
+const Pancakes = require('../../src').hold(Pancakes_Store);
 
+console.log(Babar);
 
 Babar.createMessage('yoyo', 'plickity-plow');
 Pancakes.createMessage('pancakes ready', 'oh boy oh boy oh boy');
