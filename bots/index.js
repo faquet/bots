@@ -1,9 +1,23 @@
 'use strict';
 const Bot = require('../src');
 
+const bots = [
+  {
+    name: 'clang',
+    active: true
+  },{
+    name: 'babar',
+    active: false
+  },{
+    name: 'borf',
+    active: true
+  }
+];
+
 module.exports = () => {
-
-  const clang = Bot(require('./clang'));
-  const babar = Bot(require('./babar'));
-
+  for (let bot of bots) {
+    if (bot.active) {
+      Bot(require(`./${bot.name}`));
+    }
+  }
 };

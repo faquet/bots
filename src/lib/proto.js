@@ -5,10 +5,11 @@
  * @private
  */
 
-const EventEmitter = require('events').EventEmitter;
+const Events = require('./events');
 const WebSocket = require('ws');
+const _ = require('underscore');
 const mixin = require('merge-descriptors');
-const request = require('request');
+const r = require('request');
 const qs = require('querystring');
 const ws = require('ws');
 
@@ -26,15 +27,13 @@ const Bot = exports = module.exports = {
  * @private
  */
 
-  init: function(params) {
+  init: function init(params) {
     if (!params.token) {
       throw new Error('No token was provided');
     }
 
-    this.token = params.token;
-    this.icon_url = params.icon_url || 'https://avatars0.githubusercontent.com/u/12116474?v=3&amp;s=200';
-
-    mixin(this, EventEmitter.prototype, false);
+    mixin(this, params, false);
+    mixin(this, Events, false);
     this.connect();
   },
 
@@ -45,15 +44,32 @@ const Bot = exports = module.exports = {
  * @private
  */
 
-  connect: function() {
-    this.request('rtm.start', this)
-
+  connect: function connect() {
+    this.start()
     .then((data) => {
-      mixin(this, data.self, false);
-      mixin(this, data.team, false);
-      mixin(this, data, false);
+      Object.defineProperties(this, {
+        'id': {
+          value: data.self.id,
+          enumerable: true,
+          writable: true,
+          configurable: true
+        },
+        'url': {
+          value: data.url,
+          enumerable: true,
+          writable: true,
+          configurable: true
+        },
+        'team': {
+          value: data.team,
+          enumerable: true,
+          writable: true,
+          configurable: true
+        }
+      });
       return this;
     })
+    .catch((err) => console.log(err))
 
     .then((data) => {
       const wb = new WebSocket(this.url);
@@ -63,11 +79,14 @@ const Bot = exports = module.exports = {
       wb.on('close', (data) => this.emit('close', data));
 
       wb.on('message', (data) => {
-        try { this.emit('message', JSON.parse(data)); }
-        catch (err) { console.log(err); }
+        try {
+          this.emit('message');
+          this.mention(data);
+        }
+        catch (err) {
+          console.log(err);
+        }
       });
-
-      this.on('start', () => console.log(`${this.name} connected to ${this.team.name}`));
     })
 
     .then((data) => { return this.emit('start'); })
@@ -84,11 +103,11 @@ const Bot = exports = module.exports = {
  * @private
  */
 
-  request: function req(method, params) {
-    const url = `https://slack.com/api/${method}?${qs.stringify(params)}`;
+  request: function request(method, params) {
+    const url = `https://slack.com/api/${method}?${qs.stringify(this.paramify(params))}`;
 
     return new Promise((resolve, reject) => {
-      request(url, (error, response, body) => {
+      r(url, (error, response, body) => {
         if (!error && response.statusCode === 200) {
           resolve(JSON.parse(body));
         } else if (error || response.statusCode !== 200) {
@@ -96,5 +115,21 @@ const Bot = exports = module.exports = {
         }
       });
     });
-  }
+  },
+
+  /**
+ * Put bot attributes in all request params.
+ *
+ * @param {Object} param
+ * @private
+ */
+
+  paramify: function paramify(params) {
+    params.token = this.token;
+    params.name = this.name;
+    params.icon_url = this.icon_url;
+    params.username = this.username;
+    params.real_name = this.real_name;
+    return params;
+  },
 };
