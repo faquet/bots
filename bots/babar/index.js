@@ -1,21 +1,3 @@
-<<<<<<< HEAD
-'use strict';
-
-module.exports = {
-  googleCseId: process.env.BOT_GOOGLE_IMAGE_SEARCH_ID,
-  googleApiKey: process.env.BOT_GOOGLE_IMAGE_SEARCH_SERVER_KEY,
-  token: process.env.BABAR_KEY,
-  name: 'babar',
-  username: 'babar',
-  icon_url: 'http://i.imgur.com/p51tcBd.jpg?1',
-  modules: {
-    image: true,
-    message: true,
-    remind: true,
-  }
-};
-=======
-
 'use strict';
 
 const Babar_Store = require('./config/babar_store');
@@ -60,13 +42,13 @@ Babar
     `You're the bees vagina, ${data.user}`,
     `You quack like a duck better than anyone I know, ${data.user}`,
     `You make Steve Harvey look like Steve Harvey, ${data.user}`,
-    `Can't image what life on this planet would be without you, ${data.user}. 
-    A cold desert wasteland, remote, desolate, barren . . . just like you 
+    `Can't image what life on this planet would be without you, ${data.user}.
+    A cold desert wasteland, remote, desolate, barren . . . just like you
     deep down! Isn't that neat!`,
     `We should really get some fish in chups, ${data.user}.`
   ];
   Babar.postMessage(
-    data.channel, 
+    data.channel,
     compliments[Math.floor((Math.random() * complements.length) - 1)]
   );
 });
@@ -82,6 +64,3 @@ Babar
 // .on('annoy evan', (data) => {
 //   Clang.postMessage(data.channel, "Stop that racket, Evan");
 // });
-
-
->>>>>>> 64e952f6d5851c367340f5ae1c17f8d9715fd0ca
