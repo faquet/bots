@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   token      : process.env.JOHNNY_PANCAKES_KEY,
   name       : 'johnny_pancakes',

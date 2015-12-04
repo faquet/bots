@@ -4,5 +4,5 @@ module.exports.credentials = {
   googleApiKey: process.env.BOT_GOOGLE_IMAGE_SEARCH_SERVER_KEY,
 };
 
-module.exports.turn = require('./lib/bot');
+module.exports.turn = require('./slackbot');
 module.exports.hold = require('./lib/wololo');

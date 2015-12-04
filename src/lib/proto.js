@@ -12,13 +12,18 @@ const mixin = require('merge-descriptors');
 const r = require('request');
 const qs = require('querystring');
 const ws = require('ws');
+const Proto = require('@evturn/proto');
 
 /**
  * Bot prototype.
  * @private
  */
+Proto.extend({});
 
-const Bot = exports = module.exports = {
+
+exports = module.exports = );
+
+const Bot = {
 
 /**
  * Initialize bot.
