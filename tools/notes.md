@@ -21,7 +21,7 @@ Note: Each instance of a bot is checked individually for these keys. If these ke
 
 #### Example
 ```javascript
-const Bot = require('@faquet/bots);
+const Bot = require('@faquet/bots');
 
 const slackbot = Bot({
   token: 'x0x0-some-fucked-up-mess-of-shit',
