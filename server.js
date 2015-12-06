@@ -32,6 +32,7 @@ const bots = require('./bots');
 const clang = SLACKBOT(bots.clang);
 const borf = SLACKBOT(bots.borf);
 const pancakes = SLACKBOT(bots.pancakes);
-const babar = SLACKBOT(bots.babar);
+const babar = require('./bots/babar/index.js');
+
 
 app.listen(3000, () => console.log('Served'));

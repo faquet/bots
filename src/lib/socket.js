@@ -2,15 +2,24 @@
 
 const WebSocket = require('ws');
 
+
 function SocketServer(bot) {
+
+
+///////
+// Socket Init
+///////////
 
   const socket = new WebSocket(bot.url);
 
-  const BM = bot.store.modules;
+
+///////
+// Slack Listener Methods
+////////////
 
   const Open = () => {
     bot.emit('open');
-    console.log(`A motherfucka is connected . . . to ${bot.team.name}.\n
+    console.log(`A motherfucka is connected to: ${bot.team.name}.\n
       ${bot.store.name} can\'t feel his legs`
     );
   };
@@ -35,17 +44,18 @@ function SocketServer(bot) {
   };
 
   const UserTyping = (data) => {
-    const dat = JSON.parse(data);
-    console.log('dudududud');
-    bot.emit('user_typing', dat);
+    bot.emit('user_typing', JSON.parse(data));
   };
 
+
+
+///////
+// Slack Listeners
+////////////
+
   socket.on('open', Open);
-
   socket.on('close', Close);
-
   socket.on('message', Message);
-
   socket.on('user_typing', UserTyping);
 
 };
