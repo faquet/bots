@@ -1,10 +1,7 @@
-var store = require('./babar_store'),
-    mongoose = require('mongoose');
+import mongoose from 'mongoose'
 
-module.exports = function() {
-  var db = mongoose.connect(store.db);
+mongoose.connect('mongodb://127.0.0.1/bot_database')
+mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
+mongoose.connection.once('open', _ => console.log('DB connected'))
 
-  require('../models/message');
-
-  return db;
-};
+require('../models/message')
