@@ -152,7 +152,9 @@ function Bot(params) {
   const path = require("path").resolve("src/bot_modules");
     require("fs").readdirSync(path).forEach((file) => {
       let Module = require(path + "/" + file);
+      console.log('module :>', file);
       let module_name = file.slice(0, -3);
+      console.log('module_name', module_name);
       if (bot.store.modules[module_name]) {
         let mod = Module.init(bot.store);
         this.modules[module_name] = { cache: {}};

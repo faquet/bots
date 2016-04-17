@@ -21,7 +21,7 @@ const Proto = require('@evturn/proto');
 Proto.extend({});
 
 
-exports = module.exports = );
+// exports = module.exports = );
 
 const Bot = {
 

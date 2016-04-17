@@ -31,7 +31,7 @@ const bots = require('./bots');
 
 const clang = SLACKBOT(bots.clang);
 const borf = SLACKBOT(bots.borf);
-const pancakes = SLACKBOT(bots.pancakes);
+// const pancakes = SLACKBOT(bots.pancakes);
 const babar = require('./bots/babar/index.js');
 
 
