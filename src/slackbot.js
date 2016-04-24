@@ -126,7 +126,7 @@ const Bot = Proto.extend({
   }
 });
 
-module.exports = function createBot(params) {
+export default function createBot(params) {
   if (!params.token) {
     throw new Error('No token was provided');
   }
