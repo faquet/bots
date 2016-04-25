@@ -5,7 +5,7 @@ import bot from '../slackbot'
 import { clang, borf, pancakes } from '../../bots'
 import request from 'request'
 import qs from 'querystring'
-import ws from 'ws'
+import ws, { Server as WebSocketServer } from 'ws';
 import { Observable, Observer } from 'rx'
 import { DOM } from 'rx-dom'
 
@@ -27,19 +27,28 @@ const sendRequest = bot => {
   })
 }
 
-
 const bots$ = Observable.from([ clang, borf, pancakes ])
   .flatMap(sendRequest)
 
 const socket$ = bots$
   .map(bot => new ws(bot.url))
   .subscribe(
-    x => console.log(x),
-    e => console.log('socket We errored:', e),
-    x => console.log('We completed.')
+    ws => {
+      Observable.fromEvent(ws, 'open')
+        .subscribe(
+          x => console.log('we open dog.')
+        )
+
+      Observable.fromEvent(ws, 'close')
+        .subscribe(
+          x => console.log('we closed dog.')
+        )
+
+      Observable.fromEvent(ws, 'message')
+        .subscribe(
+          x => console.log('we got a message dog.', x)
+        )
+    },
+    e => console.log('SOCKET$ We errored:', e),
+    _ => console.log('We completed.')
   )
-
-const open$ = Observable.fromEvent(socket$, 'open')
-const close$ = Observable.fromEvent(socket$, 'close')
-
-app.listen(3000, _ => console.log('Now Serving.'))
