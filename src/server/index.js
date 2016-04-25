@@ -21,12 +21,9 @@ const logger = (x, bot, e) => {
 }
 
 const startApi = bot => sendRequest(`https://slack.com/api/rtm.start?${qs.stringify(bot)}`)
-
 const postApi = bot => sendRequest(`https://slack.com/api/chat.postMessage?${qs.stringify(bot)}`)
 
 const sendRequest = url => {
-
-
   return Observable.create(x => {
     request(url, (error, response, body) => {
       if (error) {
@@ -39,8 +36,6 @@ const sendRequest = url => {
     })
   })
 }
-
-
 
 const bots$ = Observable.from(bots)
 
@@ -78,9 +73,9 @@ const post$ = Observable.interval(5000)
   })
   .flatMap(postApi)
   .subscribe(
-    x => console.log('Too experimental', x),
-    e => console.log('Too errory', e),
-    x => console.log('Too completed', x)
+    x => console.log('Post Message:', x),
+    e => console.log('Post Message Error:', e),
+    x => console.log('Post Message Complete')
   )
 
 app.listen(3000, _ => console.log('Swerver listening on 3OOO'))
