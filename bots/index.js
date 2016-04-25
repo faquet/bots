@@ -1,6 +1,6 @@
-'use strict';
+import clang from './clang'
+import borf from './borf'
+import pancakes from './pancakes'
+import babar from './babar'
 
-module.exports.clang = require('./clang');
-module.exports.borf = require('./borf');
-module.exports.pancakes = require('./pancakes');
-module.exports.babar = require('./babar');
+export default [ clang, borf, pancakes, babar ]
