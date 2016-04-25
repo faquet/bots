@@ -1,17 +1,18 @@
 import express from 'express'
-import db from '../../bots/babar/config/mongoose'
+// import db from '../../bots/babar/config/mongoose'
+// import babar from '../../bots/babar/index.js'
 import bot from '../slackbot'
 import { clang, borf, pancakes } from '../../bots'
-import babar from '../../bots/babar/index.js'
 import request from 'request'
 import qs from 'querystring'
-import { Observable } from 'rx'
+import ws from 'ws'
+import { Observable, Observer } from 'rx'
+import { DOM } from 'rx-dom'
 
 const app = express()
 
-const sendRequest = ({ token, name, icon_url, username, real_name }) => {
-
-  const url = `https://slack.com/api/rtm.start?${qs.stringify({ token, name, icon_url, username, real_name })}`
+const sendRequest = bot => {
+  const url = `https://slack.com/api/rtm.start?${qs.stringify(bot)}`
 
   return Observable.create(x => {
     request(url, (error, response, body) => {
@@ -30,10 +31,15 @@ const sendRequest = ({ token, name, icon_url, username, real_name }) => {
 const bots$ = Observable.from([ clang, borf, pancakes ])
   .flatMap(sendRequest)
 
+const socket$ = bots$
+  .map(bot => new ws(bot.url))
   .subscribe(
     x => console.log(x),
-    e => console.log('We errored:', e),
+    e => console.log('socket We errored:', e),
     x => console.log('We completed.')
   )
+
+const open$ = Observable.fromEvent(socket$, 'open')
+const close$ = Observable.fromEvent(socket$, 'close')
 
 app.listen(3000, _ => console.log('Now Serving.'))
